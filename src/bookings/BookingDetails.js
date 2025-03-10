@@ -145,9 +145,9 @@ function BookingDetails() {
   };
 
   return (
-    <section className='bg-black h-full items-center w-full'>
+    <section className='bg-black h-full items-center w-full flex justify-center'>
       <Navbar />
-      <div className="container w-full py-6 px-4">
+      <div className="container w-full py-6 px-4 flex justify-center">
         <h2 className="text-2xl text-white font-bold mb-6 text-center">Booking Details</h2>
 
         {/* Filter and Sort Section */}
