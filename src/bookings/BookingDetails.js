@@ -214,7 +214,7 @@ function BookingDetails() {
           </div>
         </div>
 
-        {/* Booking Cards */}
+        {/* Booking Cards details */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
           {filteredBookings.map((booking, index) => (
             <div 
