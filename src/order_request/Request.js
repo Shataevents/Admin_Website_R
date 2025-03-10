@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // Add useEffect
 import Navbar from '../components/Navbar';
 import { useNavigate } from 'react-router-dom';
 
@@ -26,7 +26,7 @@ function Request() {
       personalPhone: "555-0102",
       companyPhone: "555-0124",
       quantity: 30,
-      status: "Pending"
+      status: "In Progress" // Changed from Pending to In Progress
     },
     {
       id: 3,
@@ -63,10 +63,16 @@ function Request() {
     }
   ];
 
-  const [activeSection, setActiveSection] = useState(null); // Track the active section
+  // Set 'pending' as the default active section
+  const [activeSection, setActiveSection] = useState('pending');
+
+  // Remove useEffect if you only want it open on initial load
+  // useEffect(() => {
+  //   setActiveSection('pending');
+  // }, []);
 
   const toggleSection = (section) => {
-    setActiveSection(activeSection === section ? null : section); // Toggle or close if same section is clicked
+    setActiveSection(activeSection === section ? null : section);
   };
 
   const handleRowClick = (request) => {
@@ -117,7 +123,6 @@ function Request() {
       <div className="bg-black p-6 rounded-lg shadow-md lg:mx-10">
         <h2 className="text-2xl text-white text-center font-bold mb-4">Requests</h2>
 
-        {/* FAQ-Style Dropdown Sections */}
         <div className="space-y-4 ">
           {/* Pending Section */}
           <div className='border-2 border-white'>
@@ -137,13 +142,31 @@ function Request() {
             )}
           </div>
 
+          {/* In Progress Section */}
+          <div className='border-2 border-white'>
+            <button
+              onClick={() => toggleSection('inprogress')}
+              className="w-full text-left bg-black rounded-lg p-4 flex justify-between items-center shadow-md"
+            >
+              <h3 className="text-lg font-semibold text-white">In Progress</h3>
+              <span className="text-white text-2xl">
+                {activeSection === 'inprogress' ? '−' : '+'}
+              </span>
+            </button>
+            {activeSection === 'inprogress' && (
+              <div className="mt-2 bg-black p-4 rounded-lg text-white">
+                {renderRequestTable('In Progress')}
+              </div>
+            )}
+          </div>
+
           {/* Approval Section */}
           <div className='border-2 border-white'>
             <button
               onClick={() => toggleSection('approval')}
-              className="w-full text-left bg-black  rounded-lg p-4 flex justify-between items-center shadow-md"
+              className="w-full text-left bg-black rounded-lg p-4 flex justify-between items-center shadow-md"
             >
-              <h3 className="text-lg font-semibold text-white">Approval Requests</h3>
+              <h3 className="text-lg font-semibold text-white">Approved</h3>
               <span className="text-white text-2xl">
                 {activeSection === 'approval' ? '−' : '+'}
               </span>
@@ -161,7 +184,7 @@ function Request() {
               onClick={() => toggleSection('delivered')}
               className="w-full text-left bg-black rounded-lg p-4 flex justify-between items-center shadow-md"
             >
-              <h3 className="text-lg font-semibold text-white">Delivered Requests</h3>
+              <h3 className="text-lg font-semibold text-white">Delivered</h3>
               <span className="text-white text-2xl">
                 {activeSection === 'delivered' ? '−' : '+'}
               </span>
