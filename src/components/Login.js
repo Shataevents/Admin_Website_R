@@ -18,28 +18,28 @@ function Login({ setLogin }) {
 
   return (
     <div className="flex items-center w-full absolute bg-black justify-center h-full">
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md w-96">
-        <h2 className="text-2xl font-bold mb-4">Login</h2>
+      <form onSubmit={handleSubmit} className="bg-black border-2 border-white text-white p-6 rounded-lg shadow-md w-96">
+        <h2 className="text-2xl text-center font-bold mb-4">Login</h2>
         <div className="mb-4">
-          <label className="block text-gray-700">Email</label>
+          <label className="block text-gray-200">Email</label>
           <input
             type="text"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-2 border rounded"
+            className="w-full bg-black p-2 border rounded"
           />
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700">Password</label>
+          <label className="block text-gray-200">Password</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-2 border rounded"
+            className="w-full bg-black p-2 border rounded"
           />
         </div>
         <button type="submit" 
-          className="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded w-full">
+          className="bg-white  text-black px-4 py-2 rounded w-full">
           Login
         </button>
       </form>
