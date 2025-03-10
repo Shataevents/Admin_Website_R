@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import React from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { FaArrowLeft } from "react-icons/fa"; // Import back icon
 
 const CompanyVerification = () => {
   const location = useLocation();
   const planner = location.state;
+  const navigate = useNavigate();
 
-  // Status state, initialized to "Pending"
-  const [status, setStatus] = useState("Pending");
 
   if (!planner) {
     return <div className="p-6 text-red-500">No planner details found.</div>;
@@ -14,6 +14,12 @@ const CompanyVerification = () => {
 
   return (
     <div className="p-6">
+      <button 
+        className="flex items-center text-white text-xl font-bold mb-4 hover:underline"
+        onClick={() => navigate(-1)}
+      >
+        <FaArrowLeft className="mr-2" /> Back
+      </button>
       {/* Planner Details Section */}
       <div className="bg-black text-white border-2 border-white p-6 rounded-lg shadow-md mb-6">
         <h3 className="text-3xl font-semibold">Planner Details</h3>
@@ -47,17 +53,20 @@ const CompanyVerification = () => {
         </div>
       </div>
 
-      {/* Status Dropdown at the Bottom */}
-      <div className="bg-black text-white border-2 border-white p-6 rounded-lg shadow-md mt-6 flex justify-between items-center">
-        <h3 className="text-2xl font-semibold">Update Status:</h3>
-        <select
-          value={status}
-          onChange={(e) => setStatus(e.target.value)}
-          className="text-black text-xl px-3 py-2 rounded cursor-pointer border border-gray-300"
+      {/* Approve & Delete Buttons at the Bottom */}
+      <div className="bg-black p-6 rounded-lg shadow-md mt-6 flex justify-center gap-6">
+        <button 
+          className="bg-green-500 text-white px-6 py-3 text-xl font-semibold rounded-md hover:bg-green-600 transition-all"
+          onClick={() => alert("Approved")}
         >
-          <option value="Pending">Pending</option>
-          <option value="KYC Done">KYC Done</option>
-        </select>
+          Approve
+        </button>
+        <button 
+          className="bg-red-500 text-white px-6 py-3 text-xl font-semibold rounded-md hover:bg-red-600 transition-all"
+          onClick={() => alert("Deleted")}
+        >
+          Delete
+        </button>
       </div>
     </div>
   );

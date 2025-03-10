@@ -1,5 +1,6 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { FaArrowLeft } from "react-icons/fa"; // Import back icon
 
 const verificationSteps = [
   { title: "Online KYC", description: "See the Video file and uploaded documents", path: "online-kyc" },
@@ -18,6 +19,12 @@ const Kyc = () => {
 
   return (
     <div className="p-6">
+      <button 
+        className="flex items-center text-white text-xl font-bold mb-4 hover:underline"
+        onClick={() => navigate(-1)}
+      >
+        <FaArrowLeft className="mr-2" /> Back
+      </button>
       <h2 className="text-2xl font-bold mb-4">KYC Verification</h2>
 
       <div className="bg-black text-white border-2 border-white p-6 rounded-lg shadow-md">
@@ -42,12 +49,7 @@ const Kyc = () => {
         ))}
       </div>
 
-      <button 
-        className="bg-white text-black my-5 text-xl px-4 py-2 rounded "
-        onClick={() => navigate('/partner-details')}
-      >
-        Back to Partner Details
-      </button>
+
     </div>
   );
 };

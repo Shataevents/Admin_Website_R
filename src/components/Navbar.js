@@ -19,7 +19,7 @@ function Navbar() {
   }, [location.pathname]);
 
   return (
-    <nav className="bg-black text-white  w-full p-4">
+    <nav className="bg-black shadow-lg shadow-white/20 text-white  w-full p-4">
       <div className="container mx-auto flex justify-between items-center">
         {/* Left side dropdown */}
         <div className="relative text-2xl">
