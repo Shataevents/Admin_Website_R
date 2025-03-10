@@ -118,7 +118,7 @@ function Request() {
   };
 
   return (
-    <section className="bg-black min-h-screen my-10 items-center justify-center w-full">
+    <section className="bg-black min-h-screen my-5 items-center justify-center w-full">
       <Navbar />
       <div className="bg-black p-6 rounded-lg shadow-md lg:mx-10">
         <h2 className="text-2xl text-white text-center font-bold mb-4">Requests</h2>

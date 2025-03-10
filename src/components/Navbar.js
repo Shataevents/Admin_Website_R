@@ -22,7 +22,7 @@ function Navbar() {
     <nav className="bg-black text-white  w-full p-4">
       <div className="container mx-auto flex justify-between items-center">
         {/* Left side dropdown */}
-        <div className="relative">
+        <div className="relative text-2xl">
           <button
             onClick={() => setIsPagesOpen(!isPagesOpen)}
             className="flex items-center space-x-2 bg-black hover:bg-gray-900 px-4 py-2 rounded focus:outline-none"
@@ -46,7 +46,7 @@ function Navbar() {
           </button>
 
           {isPagesOpen && (
-            <div className="absolute left-0 mt-2 w-48 bg-black rounded-md shadow-lg py-1 text-white">
+            <div className="absolute left-0 mt-2 w-48 bg-black text-xl rounded-md shadow-lg py-1 text-white">
               <a
                 href="/booking-details"
                 className="block px-4 py-2 hover:bg-gray-900"
@@ -82,18 +82,18 @@ function Navbar() {
         </div>
 
         {/* Centered Admin Panel */}
-        <h1 className="text-xl font-bold absolute left-1/2 transform -translate-x-1/2">
+        <h1 className=" font-bold absolute text-2xl left-1/2 transform -translate-x-1/2">
           Shata Admin
         </h1>
         
         {/* Right side dropdown */}
-        <div className="relative">
+        <div className="relative text-3xl">
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="flex items-center space-x-2 bg-black hover:bg-gray-900 px-4 py-2 rounded focus:outline-none"
           >
             <svg
-              className="w-5 h-5"
+              className="w-8 h-8"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"

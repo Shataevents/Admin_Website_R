@@ -7,6 +7,10 @@ import Request from './order_request/Request';
 import Login from './components/Login';
 import BookCard from './bookings/BookCard';
 import Order from './order_request/Order';
+import Kyc from './partner_approval/Kyc';
+import OnlineKyc from './partner_approval/OnlineKyc';
+import CompanyVerification from './partner_approval/CompanyVerification';
+import Inperson from './partner_approval/Inperson';
 
 function App() {
 
@@ -21,6 +25,10 @@ function App() {
               <Route path="/booking-details" element={<BookingDetails />  } />
               <Route path="/partner-details" element={ <PartnerDetails /> } />
               <Route path="/request" element={ <Request /> } />
+              <Route path='/partner-details/kyc' element={<Kyc/>}/>
+              <Route path='/partner-details/kyc/online-kyc' element={<OnlineKyc/>}/>
+              <Route path='/partner-details/kyc/company-kyc' element={<CompanyVerification/>}/>
+              <Route path='/partner-details/kyc/in-person' element={<Inperson/>}/>
               <Route path="/" element={<Login  />} />
               <Route path='/booking-details/card' element={<BookCard/>}/>
               <Route path='/request/order' element={<Order/>}/>
