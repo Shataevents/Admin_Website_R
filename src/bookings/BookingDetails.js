@@ -146,13 +146,13 @@ function BookingDetails() {
 
   return (
     <section className="bg-black min-h-screen flex items-center justify-center w-full">
-      <div className="container mx-auto py-6 px-4 w-full max-w-7xl">
+      <div className="container py-6 px-4 w-full">
         <Navbar />
         <h2 className="text-2xl text-white font-bold mb-6 text-center">Booking Details</h2>
 
         {/* Filter and Sort Section */}
         <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 w-full">
             {/* Date Filter */}
             <div>
               <label className="block text-sm font-medium mb-2">Filter by Date</label>
@@ -215,11 +215,11 @@ function BookingDetails() {
         </div>
 
         {/* Booking Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 justify-items-center">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
           {filteredBookings.map((booking, index) => (
             <div 
               key={index}
-              className="bg-white p-6 rounded-lg shadow-md flex flex-col gap-4 cursor-pointer hover:shadow-lg w-full max-w-xs"
+              className="bg-white p-6 rounded-lg shadow-md flex flex-col gap-4 cursor-pointer hover:shadow-lg w-full"
               onClick={() => handleCardClick(booking)}
             >
               <h3 className="text-xl font-semibold">{booking.eventTitle}</h3>

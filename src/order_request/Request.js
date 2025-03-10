@@ -70,7 +70,7 @@ function Request() {
   return (
     <>
       <Navbar/>
-      <div className="bg-black p-6 rounded-lg shadow-md">
+      <div className="bg-black p-6 rounded-lg shadow-md lg:mx-10">
         <h2 className="text-2xl text-white text-center font-bold mb-4">Requests</h2>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-white">
