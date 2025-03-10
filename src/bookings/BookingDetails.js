@@ -145,9 +145,15 @@ function BookingDetails() {
   };
 
   return (
+<<<<<<< HEAD
     <section className="bg-black min-h-screen flex items-center justify-center w-full">
       <div className="container mx-auto py-6 px-4 w-full max-w-7xl">
         <Navbar />
+=======
+    <section className='bg-black h-full items-center w-full flex justify-center'>
+      <Navbar />
+      <div className="container w-full py-6 px-4 flex justify-center">
+>>>>>>> db197a303c9ad98442ac7f05ea27e613f4fa7b90
         <h2 className="text-2xl text-white font-bold mb-6 text-center">Booking Details</h2>
 
         {/* Filter and Sort Section */}
