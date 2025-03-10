@@ -14,7 +14,8 @@ function Request() {
       description: "Request for office supplies for upcoming board meeting",
       personalPhone: "555-0101",
       companyPhone: "555-0123",
-      quantity: 50
+      quantity: 50,
+      status: "Pending"
     },
     {
       id: 2,
@@ -24,7 +25,8 @@ function Request() {
       description: "Materials needed for team workshop documentation",
       personalPhone: "555-0102",
       companyPhone: "555-0124",
-      quantity: 30
+      quantity: 30,
+      status: "Pending"
     },
     {
       id: 3,
@@ -34,7 +36,8 @@ function Request() {
       description: "Legal documents preparation for annual event",
       personalPhone: "555-0103",
       companyPhone: "555-0125",
-      quantity: 20
+      quantity: 20,
+      status: "Pending"
     },
     {
       id: 4,
@@ -44,7 +47,8 @@ function Request() {
       description: "Branding materials for client presentation",
       personalPhone: "555-0104",
       companyPhone: "555-0126",
-      quantity: 40
+      quantity: 40,
+      status: "Pending"
     },
     {
       id: 5,
@@ -54,7 +58,8 @@ function Request() {
       description: "Documentation for festival organization",
       personalPhone: "555-0105",
       companyPhone: "555-0127",
-      quantity: 25
+      quantity: 25,
+      status: "Pending"
     }
   ];
 
@@ -69,33 +74,30 @@ function Request() {
         <h2 className="text-2xl text-white text-center font-bold mb-4">Requests</h2>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-white">
-            <thead className="bg-gray-800">
+            <thead className="bg-gray-900">
               <tr>
-                <th className="p-3">Request #</th>
-                <th className="p-3">Items</th>
-                <th className="p-3">Planner</th>
-                <th className="p-3">Company</th>
-                <th className="p-3">Description</th>
+                <th className="p-3">Request Items</th>
+                <th className="p-3">Planner Name</th>
+                <th className="p-3">Quantity</th>
+                <th className="p-3">Status</th>
               </tr>
             </thead>
             <tbody>
               {requests.map((request) => (
                 <tr 
                   key={request.id}
-                  className="bg-white text-black border-b hover:bg-gray-100 cursor-pointer"
+                  className="bg-black text-white border-b border-white hover:bg-gray-800 cursor-pointer"
                   onClick={() => handleRowClick(request)}
                 >
-                  <td className="p-3">{request.id}</td>
                   <td className="p-3">
-                    <ul className="list-disc list-inside">
-                      {request.items.map((item, index) => (
-                        <li key={index}>{item}</li>
-                      ))}
-                    </ul>
+                    {request.items.join(", ")}
                   </td>
                   <td className="p-3">{request.plannerName}</td>
-                  <td className="p-3">{request.company}</td>
-                  <td className="p-3">{request.description}</td>
+                  <td className="p-3">{request.quantity}</td>
+                  <td className="p-3 flex items-center">
+                    <span className="mr-2">{request.status}</span>
+                     
+                  </td>
                 </tr>
               ))}
             </tbody>
