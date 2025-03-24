@@ -11,6 +11,7 @@ import Kyc from './partner_approval/Kyc';
 import OnlineKyc from './partner_approval/OnlineKyc';
 import CompanyVerification from './partner_approval/CompanyVerification';
 import Inperson from './partner_approval/Inperson';
+import UserCount from './UserCount/UserCount';
 
 function App() {
 
@@ -25,13 +26,14 @@ function App() {
               <Route path="/booking-details" element={<BookingDetails />  } />
               <Route path="/partner-details" element={ <PartnerDetails /> } />
               <Route path="/request" element={ <Request /> } />
-              <Route path='/partner-details/kyc' element={<Kyc/>}/>
-              <Route path='/partner-details/kyc/online-kyc' element={<OnlineKyc/>}/>
-              <Route path='/partner-details/kyc/company-kyc' element={<CompanyVerification/>}/>
-              <Route path='/partner-details/kyc/in-person' element={<Inperson/>}/>
+              <Route path='/partner-details/kyc/:id' element={<Kyc/>}/>
+              <Route path='/partner-details/kyc/online-kyc/:id' element={<OnlineKyc/>}/>
+              <Route path='/partner-details/kyc/company-kyc/:id' element={<CompanyVerification/>}/>
+              <Route path='/partner-details/kyc/in-person/:id' element={<Inperson/>}/>
               <Route path="/" element={<Login  />} />
               <Route path='/booking-details/card' element={<BookCard/>}/>
               <Route path='/request/order' element={<Order/>}/>
+              <Route path='/user-count' element={<UserCount/>}/>
             </Routes>
           </main>
         </div>

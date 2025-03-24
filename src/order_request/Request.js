@@ -87,9 +87,9 @@ function Request() {
 
     return (
       <div className="overflow-x-auto">
-        <table className="w-full text-left text-white ">
-          <thead className="bg-black border-y border-gray-900">
-            <tr>
+        <table className="w-full text-left text-black ">
+          <thead className="bg-white border-y border-gray-900">
+            <tr className='bg-white'>
               <th className="p-3">Request Items</th>
               <th className="p-3">Planner Name</th>
               <th className="p-3">Quantity</th>
@@ -100,7 +100,7 @@ function Request() {
             {filteredRequests.map((request) => (
               <tr
                 key={request.id}
-                className="bg-black text-white border-b border-gray-900 hover:bg-gray-900 cursor-pointer"
+                className="bg-[#fcfcfc] text-black border-b border-gray-900 hover:bg-orange-100 cursor-pointer"
                 onClick={() => handleRowClick(request)}
               >
                 <td className="p-3">{request.items.join(", ")}</td>
@@ -118,25 +118,25 @@ function Request() {
   };
 
   return (
-    <section className="bg-black min-h-screen my-5 items-center justify-center w-full">
+    <section className="bg-white min-h-screen items-center justify-center w-full">
       <Navbar />
-      <div className="bg-black p-6 rounded-lg shadow-md lg:mx-10">
-        <h2 className="text-2xl text-white text-center font-bold mb-4">Requests</h2>
+      <div className="bg-white p-4 my-4 rounded-lg shadow-md lg:mx-10">
+        <h2 className="text-2xl  text-center font-bold mb-4">Requests</h2>
 
         <div className="space-y-4 ">
           {/* Pending Section */}
           <div className='border-2 border-white'>
             <button
               onClick={() => toggleSection('pending')}
-              className="w-full text-left bg-black rounded-lg p-4 flex justify-between items-center shadow-md"
+              className="w-full text-left bg-white rounded-lg p-4 flex justify-between items-center shadow-md"
             >
-              <h3 className="text-lg font-semibold text-white">Pending Requests</h3>
-              <span className="text-white text-2xl">
+              <h3 className="text-lg font-semibold ">Pending Requests</h3>
+              <span className="text-black text-2xl">
                 {activeSection === 'pending' ? '−' : '+'}
               </span>
             </button>
             {activeSection === 'pending' && (
-              <div className="mt-2 bg-black p-4 rounded-lg text-white">
+              <div className="mt-2 bg-white p-4 rounded-lg">
                 {renderRequestTable('Pending')}
               </div>
             )}
@@ -146,15 +146,15 @@ function Request() {
           <div className='border-2 border-white'>
             <button
               onClick={() => toggleSection('inprogress')}
-              className="w-full text-left bg-black rounded-lg p-4 flex justify-between items-center shadow-md"
+              className="w-full text-left bg-white rounded-lg p-4 flex justify-between items-center shadow-md"
             >
-              <h3 className="text-lg font-semibold text-white">In Progress</h3>
-              <span className="text-white text-2xl">
+              <h3 className="text-lg font-semibold ">In Progress</h3>
+              <span className=" text-2xl">
                 {activeSection === 'inprogress' ? '−' : '+'}
               </span>
             </button>
             {activeSection === 'inprogress' && (
-              <div className="mt-2 bg-black p-4 rounded-lg text-white">
+              <div className="mt-2 bg-white p-4 rounded-lg ">
                 {renderRequestTable('In Progress')}
               </div>
             )}
@@ -164,15 +164,15 @@ function Request() {
           <div className='border-2 border-white'>
             <button
               onClick={() => toggleSection('approval')}
-              className="w-full text-left bg-black rounded-lg p-4 flex justify-between items-center shadow-md"
+              className="w-full text-left bg-white rounded-lg p-4 flex justify-between items-center shadow-md"
             >
-              <h3 className="text-lg font-semibold text-white">Approved</h3>
-              <span className="text-white text-2xl">
+              <h3 className="text-lg font-semibold ">Approved</h3>
+              <span className="text-2xl">
                 {activeSection === 'approval' ? '−' : '+'}
               </span>
             </button>
             {activeSection === 'approval' && (
-              <div className="mt-2 bg-black p-4 rounded-lg text-white">
+              <div className="mt-2 bg-white p-4 rounded-lg ">
                 {renderRequestTable('Approval')}
               </div>
             )}
@@ -182,15 +182,15 @@ function Request() {
           <div className='border-2 border-white'>
             <button
               onClick={() => toggleSection('delivered')}
-              className="w-full text-left bg-black rounded-lg p-4 flex justify-between items-center shadow-md"
+              className="w-full text-left bg-white rounded-lg p-4 flex justify-between items-center shadow-md"
             >
-              <h3 className="text-lg font-semibold text-white">Delivered</h3>
-              <span className="text-white text-2xl">
+              <h3 className="text-lg font-semibold ">Delivered</h3>
+              <span className=" text-2xl">
                 {activeSection === 'delivered' ? '−' : '+'}
               </span>
             </button>
             {activeSection === 'delivered' && (
-              <div className="mt-2 bg-black p-4 rounded-lg text-white">
+              <div className="mt-2 bg-white p-4 rounded-lg ">
                 {renderRequestTable('Delivered')}
               </div>
             )}

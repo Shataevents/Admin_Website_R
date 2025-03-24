@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -10,8 +11,11 @@ function Navbar() {
   const pageMap = {
     '/booking-details': 'Booking Details',
     '/partner-details': 'Partner Details',
-    '/request': 'Request'
+    '/request': 'Request',
   };
+
+  
+  const navigate = useNavigate();
 
   useEffect(() => {
     const currentPage = pageMap[location.pathname] || 'Pages';
@@ -19,13 +23,13 @@ function Navbar() {
   }, [location.pathname]);
 
   return (
-    <nav className="bg-black shadow-lg shadow-white/20 text-white  w-full p-4">
+    <nav className="bg-[#FCFCFC] shadow-sm shadow-black/40 text-black w-full p-4">
       <div className="container mx-auto flex justify-between items-center">
         {/* Left side dropdown */}
-        <div className="relative text-2xl">
+        <div className="relative text-xl">
           <button
             onClick={() => setIsPagesOpen(!isPagesOpen)}
-            className="flex items-center space-x-2 bg-black hover:bg-gray-900 px-4 py-2 rounded focus:outline-none"
+            className="flex items-center space-x-2 bg-orange hover:bg-orange px-4 py-2 rounded focus:outline-none"
           >
             <span>{selectedPage}</span>
             {/* Chevron arrow that changes direction */}
@@ -46,10 +50,10 @@ function Navbar() {
           </button>
 
           {isPagesOpen && (
-            <div className="absolute left-0 mt-2 w-48 bg-black text-xl rounded-md shadow-lg py-1 text-white">
+            <div className="absolute left-0 mt-2 w-48 bg-white text-xl rounded-md shadow-lg py-1 text-black">
               <a
                 href="/booking-details"
-                className="block px-4 py-2 hover:bg-gray-900"
+                className="block px-4 py-2 hover:bg-orange-400"
                 onClick={() => {
                   setSelectedPage('Booking Details');
                   setIsPagesOpen(false);
@@ -59,7 +63,7 @@ function Navbar() {
               </a>
               <a
                 href="/partner-details"
-                className="block px-4 py-2 hover:bg-gray-900"
+                className="block px-4 py-2 hover:bg-orange-400"
                 onClick={() => {
                   setSelectedPage('Partner Details');
                   setIsPagesOpen(false);
@@ -69,7 +73,7 @@ function Navbar() {
               </a>
               <a
                 href="/request"
-                className="block px-4 py-2 hover:bg-gray-900"
+                className="block px-4 py-2 hover:bg-orange-400"
                 onClick={() => {
                   setSelectedPage('Request');
                   setIsPagesOpen(false);
@@ -81,19 +85,27 @@ function Navbar() {
           )}
         </div>
 
-        {/* Centered Admin Panel */}
-        <h1 className=" font-bold absolute text-2xl left-1/2 transform -translate-x-1/2">
-          Shata Admin
-        </h1>
-        
+        {/* Centered Logo and Admin Text */}
+        <div className="absolute left-1/2 flex-col transform -translate-x-1/2 flex items-center cursor-pointer space-x-2" 
+         onClick={() => navigate('/dashboard')}>
+          <img
+            src="/logo.png" // Reference the logo directly from the public folder
+            alt="Shata Logo"
+            className="w-14 h-8 bg-white"
+          />
+          <h1 className="font-semibold text-3xl text-gray-800">
+            Admin
+          </h1>
+        </div>
+
         {/* Right side dropdown */}
-        <div className="relative text-3xl">
+        <div className="relative text-2xl">
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="flex items-center space-x-2 bg-black hover:bg-gray-900 px-4 py-2 rounded focus:outline-none"
+            className="flex items-center space-x-2 bg-white px-4 py-2 rounded focus:outline-none"
           >
             <svg
-              className="w-8 h-8"
+              className="w-6 h-6"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -111,16 +123,10 @@ function Navbar() {
 
           {isOpen && (
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 text-black">
-              <a
-                href="/dashboard"
-                className="block px-4 py-2 hover:bg-gray-100"
-              >
+              <a href="/dashboard" className="block px-4 py-2 hover:bg-gray-100">
                 Dashboard
               </a>
-              <a
-                href="/login"
-                className="block px-4 py-2 hover:bg-gray-100"
-              >
+              <a href="/login" className="block px-4 py-2 hover:bg-gray-100">
                 Logout
               </a>
             </div>

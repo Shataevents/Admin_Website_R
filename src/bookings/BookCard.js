@@ -17,11 +17,11 @@ const BookCard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-black py-6 px-4">
+    <div className="min-h-screen bg-white py-6 px-4">
       <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6">
         <button 
           onClick={() => navigate(-1)}
-          className="mb-4 px-4 py-2 bg-black text-white rounded hover:bg-gray-900"
+          className="mb-4 px-4 py-2 bg-white rounded hover:bg-orange-100"
         >
           <svg 
             className="w-6 h-6" 
