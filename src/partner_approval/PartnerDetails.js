@@ -6,10 +6,13 @@ const PartnerDetails = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState(1);
   const [planners, setPlanners] = useState([]);
+  const [filteredPlanners, setFilteredPlanners] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Fetch partner details from the API
   useEffect(() => {
-    fetch("http://shata-app-alb-933188665.ap-south-2.elb.amazonaws.com/partners")
+    fetch(
+      "http://shata-app-alb-933188665.ap-south-2.elb.amazonaws.com/partners"
+    )
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -17,18 +20,25 @@ const PartnerDetails = () => {
         return response.json();
       })
       .then((data) => {
-        const partnerData = data.data || [];
-        setPlanners(partnerData);
+        setLoading(false);
+        setPlanners(data);
       })
       .catch((error) => {
+        setLoading(false);
         console.error("Error fetching partner details:", error);
         setPlanners([]);
       });
   }, []);
 
-  const filteredPlanners = planners.filter((planner) =>
-    activeTab === 1 ? planner.status === "Pending" : planner.status === "Approved"
-  );
+  useEffect(() => {
+    setFilteredPlanners(
+      planners.filter((planner) =>
+        activeTab === 1
+          ? planner.status === "pending"
+          : planner.status === "approved"
+      )
+    );
+  }, [planners, activeTab]);
 
   return (
     <>
@@ -39,7 +49,9 @@ const PartnerDetails = () => {
             <div
               key={index}
               className={`px-6 py-2 mx-1 cursor-pointer transition-all duration-300 ${
-                activeTab === index + 1 ? "bg-black text-white font-bold rounded-full" : "text-black"
+                activeTab === index + 1
+                  ? "bg-black text-white font-bold rounded-full"
+                  : "text-black"
               }`}
               onClick={() => setActiveTab(index + 1)}
             >
@@ -47,9 +59,12 @@ const PartnerDetails = () => {
             </div>
           ))}
         </div>
-
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-6">
-          {filteredPlanners.length > 0 ? (
+          {loading ? (
+            <div className="col-span-1 sm:col-span-2 md:col-span-3 text-center text-gray-600 text-xl">
+              Loading...
+            </div>
+          ) : filteredPlanners.length > 0 ? (
             filteredPlanners.map((planner, index) => (
               <div
                 key={index}
@@ -63,18 +78,20 @@ const PartnerDetails = () => {
                 {planner.status === "Pending" && (
                   <button
                     className="px-4 py-2 bg-orange-400 text-black text-xl items-end justify-end rounded-md mt-2"
-                    onClick={() => navigate(`/partner-details/kyc/${planner.id}`)} // Pass planner ID in URL
+                    onClick={() =>
+                      navigate(`/partner-details/kyc/${planner.id}`)
+                    }
                   >
                     Check Details
                   </button>
                 )}
               </div>
             ))
-          ) : (
+          ) : !loading && planners.length === 0 ? (
             <div className="col-span-1 sm:col-span-2 md:col-span-3 text-center text-gray-600 text-xl">
-              No partner done till now.
+              No partner found.
             </div>
-          )}
+          ) : null}
         </div>
       </div>
     </>
