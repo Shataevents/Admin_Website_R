@@ -1,26 +1,36 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { auth } from "../firebase"; // Import Firebase auth
+import { signOut } from "firebase/auth";
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isPagesOpen, setIsPagesOpen] = useState(false);
-  const [selectedPage, setSelectedPage] = useState('Pages');
+  const [selectedPage, setSelectedPage] = useState("Pages");
   const location = useLocation();
-
-  const pageMap = {
-    '/booking-details': 'Booking Details',
-    '/partner-details': 'Partner Details',
-    '/request': 'Request',
-  };
-
-  
   const navigate = useNavigate();
 
+  const pageMap = {
+    "/booking-details": "Booking Details",
+    "/partner-details": "Partner Details",
+    "/request": "Request",
+  };
+
   useEffect(() => {
-    const currentPage = pageMap[location.pathname] || 'Pages';
+    const currentPage = pageMap[location.pathname] || "Pages";
     setSelectedPage(currentPage);
   }, [location.pathname]);
+
+  // Handle logout
+  const handleLogout = async () => {
+    try {
+      await signOut(auth); // Sign out the user using Firebase
+      navigate("/login"); // Redirect to login page
+    } catch (error) {
+      console.error("Error logging out:", error);
+      alert("Failed to log out. Please try again.");
+    }
+  };
 
   return (
     <nav className="bg-[#FCFCFC] shadow-sm shadow-black/40 text-black w-full p-4">
@@ -34,7 +44,7 @@ function Navbar() {
             <span>{selectedPage}</span>
             {/* Chevron arrow that changes direction */}
             <svg
-              className={`w-5 h-5 transition-transform ${isPagesOpen ? 'rotate-180' : ''}`}
+              className={`w-5 h-5 transition-transform ${isPagesOpen ? "rotate-180" : ""}`}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -55,7 +65,7 @@ function Navbar() {
                 href="/booking-details"
                 className="block px-4 py-2 hover:bg-orange-400"
                 onClick={() => {
-                  setSelectedPage('Booking Details');
+                  setSelectedPage("Booking Details");
                   setIsPagesOpen(false);
                 }}
               >
@@ -65,7 +75,7 @@ function Navbar() {
                 href="/partner-details"
                 className="block px-4 py-2 hover:bg-orange-400"
                 onClick={() => {
-                  setSelectedPage('Partner Details');
+                  setSelectedPage("Partner Details");
                   setIsPagesOpen(false);
                 }}
               >
@@ -75,7 +85,7 @@ function Navbar() {
                 href="/request"
                 className="block px-4 py-2 hover:bg-orange-400"
                 onClick={() => {
-                  setSelectedPage('Request');
+                  setSelectedPage("Request");
                   setIsPagesOpen(false);
                 }}
               >
@@ -86,16 +96,16 @@ function Navbar() {
         </div>
 
         {/* Centered Logo and Admin Text */}
-        <div className="absolute left-1/2 flex-col transform -translate-x-1/2 flex items-center cursor-pointer space-x-2" 
-         onClick={() => navigate('/dashboard')}>
+        <div
+          className="absolute left-1/2 flex-col transform -translate-x-1/2 flex items-center cursor-pointer space-x-2"
+          onClick={() => navigate("/dashboard")}
+        >
           <img
             src="/logo.png" // Reference the logo directly from the public folder
             alt="Shata Logo"
             className="w-14 h-8 bg-white"
           />
-          <h1 className="font-semibold text-3xl text-gray-800">
-            Admin
-          </h1>
+          <h1 className="font-semibold text-3xl text-gray-800">Admin</h1>
         </div>
 
         {/* Right side dropdown */}
@@ -126,9 +136,12 @@ function Navbar() {
               <a href="/dashboard" className="block px-4 py-2 hover:bg-gray-100">
                 Dashboard
               </a>
-              <a href="/login" className="block px-4 py-2 hover:bg-gray-100">
+              <button
+                onClick={handleLogout}
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+              >
                 Logout
-              </a>
+              </button>
             </div>
           )}
         </div>

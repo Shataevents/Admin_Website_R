@@ -1,27 +1,29 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { auth } from '../firebase'; 
+import React, { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { auth } from "../firebase";
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 
-function Login({ setLogin }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [message, setMessage] = useState('');
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Check for error message from ProtectedRoute
+  const errorFromRedirect = location.state?.error || "";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
-    setMessage('');
-    
+    setError("");
+    setMessage("");
+
     try {
-      let res = await signInWithEmailAndPassword(auth, email, password);
-      setLogin?.(true);
-      console.log("res", res);
-      navigate('/dashboard');
+      await signInWithEmailAndPassword(auth, email, password);
+      navigate("/dashboard"); // Navigate to dashboard on successful login
     } catch (err) {
       setError("Invalid Credentials");
     } finally {
@@ -31,16 +33,16 @@ function Login({ setLogin }) {
 
   const handleForgotPassword = async () => {
     if (!email) {
-      setError('Please enter your email to reset your password.');
+      setError("Please enter your email to reset your password.");
       return;
     }
-    setError('');
-    setMessage('');
+    setError("");
+    setMessage("");
     try {
       await sendPasswordResetEmail(auth, email);
-      setMessage('Password reset email sent. Check your inbox.');
+      setMessage("Password reset email sent. Check your inbox.");
     } catch (err) {
-      setError('Error sending password reset email. Please try again.');
+      setError("Error sending password reset email. Please try again.");
     }
   };
 
@@ -49,6 +51,11 @@ function Login({ setLogin }) {
       <form onSubmit={handleSubmit} className="bg-black border-2 border-white text-white p-6 rounded-lg shadow-md w-96">
         <h2 className="text-2xl text-center font-bold mb-4">Login</h2>
 
+        {/* Display error from redirect (e.g., "You are not logged in...") */}
+        {errorFromRedirect && (
+          <p className="text-red-500 text-sm mb-3">{errorFromRedirect}</p>
+        )}
+        {/* Display login error or success message */}
         {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
         {message && <p className="text-green-500 text-sm mb-3">{message}</p>}
 
@@ -79,7 +86,7 @@ function Login({ setLogin }) {
           className="bg-white text-black px-4 py-2 rounded w-full"
           disabled={loading}
         >
-          {loading ? 'Logging in...' : 'Login'}
+          {loading ? "Logging in..." : "Login"}
         </button>
 
         <div className="text-center mt-3">
