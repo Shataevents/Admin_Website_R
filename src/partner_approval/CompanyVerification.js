@@ -39,7 +39,7 @@ const CompanyVerification = () => {
   // Handler for Approve button (status: "ACV")
   const handleApprove = () => {
     fetch(`http://shata-app-alb-933188665.ap-south-2.elb.amazonaws.com/partners/${id}`, {
-      method: "PATCH",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer YOUR_TOKEN_HERE`, // Replace with actual token
@@ -65,7 +65,7 @@ const CompanyVerification = () => {
   // Handler for Reupload button (status: "RCV")
   const handleReupload = () => {
     fetch(`http://shata-app-alb-933188665.ap-south-2.elb.amazonaws.com/partners/${id}`, {
-      method: "PATCH",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer YOUR_TOKEN_HERE`, // Replace with actual token
@@ -91,7 +91,7 @@ const CompanyVerification = () => {
   // Handler for Decline button (status: "DCV")
   const handleDecline = () => {
     fetch(`http://shata-app-alb-933188665.ap-south-2.elb.amazonaws.com/partners/${id}`, {
-      method: "PATCH",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer YOUR_TOKEN_HERE`, // Replace with actual token

@@ -2,17 +2,31 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 
+const statusTabs = {
+  pending: ["pending"],
+  kyc: ["AKYC", "RKYC", "DKYC"],
+  companyVerification: ["ACV", "RCV", "DCV"],
+  declined: ["Decline"],
+  approved: ["Approve"],
+};
+
+const statusLabels = {
+  pending: "Pending",
+  kyc: "KYC",
+  companyVerification: "Company Verification",
+  declined: "Declined",
+  approved: "Approved",
+};
+
 const PartnerDetails = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState(1);
+  const [activeTab, setActiveTab] = useState("pending");
   const [planners, setPlanners] = useState([]);
   const [filteredPlanners, setFilteredPlanners] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(
-      "http://shata-app-alb-933188665.ap-south-2.elb.amazonaws.com/partners"
-    )
+    fetch("http://shata-app-alb-933188665.ap-south-2.elb.amazonaws.com/partners")
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -32,11 +46,7 @@ const PartnerDetails = () => {
 
   useEffect(() => {
     setFilteredPlanners(
-      planners.filter((planner) =>
-        activeTab === 1
-          ? planner.status === "pending"
-          : planner.status === "approved"
-      )
+      planners.filter((planner) => statusTabs[activeTab].includes(planner.status))
     );
   }, [planners, activeTab]);
 
@@ -44,18 +54,16 @@ const PartnerDetails = () => {
     <>
       <Navbar />
       <div className="p-6">
-        <div className="flex bg-white text-xl p-2 rounded-lg w-full items-center justify-center mx-auto">
-          {["Pending", "Approved"].map((tab, index) => (
+        <div className="flex flex-wrap bg-white text-sm p-2 rounded-lg w-full items-center justify-center mx-auto">
+          {Object.entries(statusLabels).map(([key, label]) => (
             <div
-              key={index}
-              className={`px-6 py-2 mx-1 cursor-pointer transition-all duration-300 ${
-                activeTab === index + 1
-                  ? "bg-black text-white font-bold rounded-full"
-                  : "text-black"
+              key={key}
+              className={`px-3 py-1 mx-1 cursor-pointer transition-all duration-300 whitespace-nowrap text-xs text-center ${
+                activeTab === key ? "bg-black text-white font-bold rounded-full" : "text-black"
               }`}
-              onClick={() => setActiveTab(index + 1)}
+              onClick={() => setActiveTab(key)}
             >
-              {tab}
+              {label}
             </div>
           ))}
         </div>
@@ -70,28 +78,27 @@ const PartnerDetails = () => {
                 key={index}
                 className="p-4 rounded-lg shadow-lg shadow-black/25 bg-white border-2 border-white"
               >
-                <h3 className="font-bold text-3xl">{planner.name}</h3>
-                <p className="text-black/70 text-xl">{planner.companyName}</p>
-                <p className="text-xl">Location: {planner.companyLocation}</p>
-
-                {/* Show Check Details button only when status is Pending */}
-                {planner.status === "pending" && (
+                <h3 className="font-bold text-lg">{planner.name || "Not Available"}</h3>
+                <p className="text-black/70 text-sm">{planner.companyName || "Not Available"}</p>
+                <p className="text-sm">Location: {planner.companyLocation || "Not Available"}</p>
+                <p className="text-sm font-semibold">
+                  Status: {planner.status}
+                </p>
+                {activeTab !== "declined" && (
                   <button
-                    className="px-4 py-2 bg-orange-400 text-black text-xl items-end justify-end rounded-md mt-2"
-                    onClick={() =>
-                      navigate(`/partner-details/kyc/${planner._id}`)
-                    }
+                    className="px-3 py-1 bg-orange-400 text-black text-sm rounded-md mt-2"
+                    onClick={() => navigate(`/partner-details/kyc/${planner._id}`)}
                   >
                     Check Details
                   </button>
                 )}
               </div>
             ))
-          ) : !loading && planners.length === 0 ? (
+          ) : (
             <div className="col-span-1 sm:col-span-2 md:col-span-3 text-center text-gray-600 text-xl">
               No partner found.
             </div>
-          ) : null}
+          )}
         </div>
       </div>
     </>

@@ -73,11 +73,11 @@ const Kyc = () => {
 
       <div className="bg-white border-2 border-white p-6 rounded-lg shadow-md">
         <h3 className="text-3xl font-semibold mb-2">Planner Details</h3>
-        <p className="text-xl"><strong>Name:</strong> {planner.name}</p>
-        <p className="text-xl"><strong>Company:</strong> {planner.companyName}</p>
-        <p className="text-xl"><strong>Company Location:</strong> {planner.companyLocation}</p>
-        <p className="text-xl"><strong>Personal Phone:</strong> {planner.mobileNo}</p>
-        <p className="text-xl"><strong>Company Email:</strong> {planner.companyEmail}</p>
+        <p className="text-xl"><strong>Name:</strong> {planner.name || "Not Available"}</p>
+        <p className="text-xl"><strong>Company:</strong> {planner.companyName || "Not Available"}</p>
+        <p className="text-xl"><strong>Company Location:</strong> {planner.companyLocation || "Not Available"}</p>
+        <p className="text-xl"><strong>Personal Phone:</strong> {planner.mobileNo || "Not Available"}</p>
+        <p className="text-xl"><strong>Company Email:</strong> {planner.companyEmail || "Not Available"}</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">

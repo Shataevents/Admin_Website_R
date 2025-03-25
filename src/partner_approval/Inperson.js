@@ -39,7 +39,7 @@ const Inperson = () => {
   // Handler for Approve button (status: "Approve")
   const handleApprove = () => {
     fetch(`http://shata-app-alb-933188665.ap-south-2.elb.amazonaws.com/partners/${id}`, {
-      method: "PATCH",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer YOUR_TOKEN_HERE`, // Replace with actual token
@@ -91,7 +91,7 @@ const Inperson = () => {
   // Handler for Decline button (status: "Decline")
   const handleDecline = () => {
     fetch(`http://shata-app-alb-933188665.ap-south-2.elb.amazonaws.com/partners/${id}`, {
-      method: "PATCH",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer YOUR_TOKEN_HERE`, // Replace with actual token
