@@ -21,8 +21,9 @@ function BookingDetails() {
       })
       .then((data) => {
         // Assuming the API returns a "data" field with an array of bookings
-        const bookingData = data.data || [];
-        setBookings(bookingData);
+        // const bookingData = data.data || [];
+        console.log("Booking details fetched successfully:", data);
+        setBookings(data);
       })
       .catch((error) => {
         console.error("Error fetching booking details:", error);
@@ -31,7 +32,7 @@ function BookingDetails() {
   }, []);
 
   // Get unique planners for dropdown
-  const uniquePlanners = [...new Set(bookings.map(booking => booking.planner))];
+  const uniquePlanners = [...new Set(bookings?.map(booking => booking.planner))];
 
   // Filter and sort bookings
   const filteredBookings = bookings
@@ -135,7 +136,7 @@ function BookingDetails() {
                 className="w-full p-2 border rounded"
               >
                 <option value="all">All Planners</option>
-                {uniquePlanners.map((planner, index) => (
+                {uniquePlanners?.map((planner, index) => (
                   <option key={index} value={planner}>{planner}</option>
                 ))}
               </select>
@@ -159,24 +160,26 @@ function BookingDetails() {
         {/* Booking Cards Section */}
         <div className="grid px-3 grid-cols-1 md:grid-cols-3 gap-6 w-full">
           {filteredBookings.length > 0 ? (
-            filteredBookings.map((booking, index) => (
+            filteredBookings?.map((booking, index) => (
               <div 
                 key={index}
                 className="bg-white p-6 rounded-lg shadow-md flex flex-col gap-4 cursor-pointer hover:shadow-lg w-full"
                 onClick={() => handleCardClick(booking)}
               >
-                <h3 className="text-xl font-semibold">{booking.eventTitle}</h3>
+                <h3 className="text-xl font-semibold">{booking.eventTitle || "Not Available"}</h3>
                 
                 <div className="flex items-center gap-2">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
-                  <span>{booking.date}</span>
+                  <span>
+                     
+                    {booking?.dateTo?.split("T")[0]}</span>
                 </div>
 
                 <div className="flex flex-col gap-2">
                   <p className="font-medium">Selected Services:</p>
-                  {booking.services.map((service, idx) => (
+                  {booking.services?.map((service, idx) => (
                     <div key={idx} className="flex items-center gap-2">
                       {service === "Photography" && (
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -203,7 +206,7 @@ function BookingDetails() {
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
-                  <span>{booking.planner}</span>
+                  <span>{booking.planner || "Not Available"}</span>
                 </div>
               </div>
             ))

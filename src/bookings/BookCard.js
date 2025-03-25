@@ -6,7 +6,7 @@ const BookCard = () => {
   const navigate = useNavigate();
   const booking = location.state || {};
   const [status, setStatus] = useState('upcoming'); // Default status
-
+  console.log('Booking details:', booking);
   const statusOptions = [
     'to visit',
     'in progress',
@@ -48,10 +48,10 @@ const BookCard = () => {
             <div className="space-y-2">
               <p><strong>Name:</strong> {booking.clientDetails?.name || 'N/A'}</p>
               <p><strong>Phone Number:</strong> {booking.clientDetails?.phone || 'N/A'}</p>
-              <p><strong>Event Date:</strong> {booking.date}</p>
-              <p><strong>No. of People:</strong> {booking.clientDetails?.people || 'N/A'}</p>
-              <p><strong>Budget:</strong> ${booking.clientDetails?.budget?.toLocaleString() || 'N/A'}</p>
-              <p><strong>Location:</strong> {booking.clientDetails?.location || 'N/A'}</p>
+              <p><strong>Event Date:</strong> {booking?.dateFrom.split("T")[0]}</p>
+              <p><strong>No. of People:</strong> {booking?.quantity || 'N/A'}</p>
+              <p><strong>Budget:</strong> ${booking?.budget || 'N/A'}</p>
+              <p><strong>Location:</strong> {booking?.location || 'N/A'}</p>
               <p><strong>Services Booked:</strong> {booking.services?.join(', ') || 'N/A'}</p>
             </div>
           </div>
