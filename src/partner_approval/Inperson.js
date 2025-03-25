@@ -159,12 +159,12 @@ const Inperson = () => {
         >
           Approve
         </button>
-        <button 
+        {/* <button 
           className="bg-orange-300 text-white px-6 py-3 text-xl font-semibold rounded hover:bg-orange-400 transition-all"
           onClick={handleReupload}
         >
           Reupload
-        </button>
+        </button> */}
         <button 
           className="bg-red-500 text-white px-6 py-3 text-xl font-semibold rounded-md hover:bg-red-600 transition-all"
           onClick={handleDecline}

@@ -71,15 +71,15 @@ const PartnerDetails = () => {
                 className="p-4 rounded-lg shadow-lg shadow-black/25 bg-white border-2 border-white"
               >
                 <h3 className="font-bold text-3xl">{planner.name}</h3>
-                <p className="text-black/70 text-xl">{planner.company}</p>
+                <p className="text-black/70 text-xl">{planner.companyName}</p>
                 <p className="text-xl">Location: {planner.companyLocation}</p>
 
                 {/* Show Check Details button only when status is Pending */}
-                {planner.status === "Pending" && (
+                {planner.status === "pending" && (
                   <button
                     className="px-4 py-2 bg-orange-400 text-black text-xl items-end justify-end rounded-md mt-2"
                     onClick={() =>
-                      navigate(`/partner-details/kyc/${planner.id}`)
+                      navigate(`/partner-details/kyc/${planner._id}`)
                     }
                   >
                     Check Details
