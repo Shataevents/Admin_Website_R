@@ -11,7 +11,12 @@ function Login({ setLogin }) {
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
-
+  useEffect(() => {
+    const token = localStorage.getItem('token-shata');
+    if (token) {
+      navigate('/dashboard');
+    }
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
