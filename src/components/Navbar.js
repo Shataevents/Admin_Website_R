@@ -16,7 +16,10 @@ function Navbar() {
 
   
   const navigate = useNavigate();
-
+  const handleLogout = () => {
+    localStorage.removeItem('token-shata'); 
+    navigate('/'); 
+  }
   useEffect(() => {
     const currentPage = pageMap[location.pathname] || 'Pages';
     setSelectedPage(currentPage);
@@ -126,9 +129,9 @@ function Navbar() {
               <a href="/dashboard" className="block px-4 py-2 hover:bg-gray-100">
                 Dashboard
               </a>
-              <a href="/login" className="block px-4 py-2 hover:bg-gray-100">
+              <div onClick={()=> handleLogout()} className="block px-4 py-2 hover:bg-gray-100 cursor-pointer">
                 Logout
-              </a>
+              </div>
             </div>
           )}
         </div>

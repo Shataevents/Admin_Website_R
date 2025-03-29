@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase'; 
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
@@ -11,6 +11,8 @@ function Login({ setLogin }) {
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -20,7 +22,10 @@ function Login({ setLogin }) {
     try {
       let res = await signInWithEmailAndPassword(auth, email, password);
       setLogin?.(true);
-      console.log("res", res);
+      console.log("res", res.user.accessToken);
+      // Store the token in local storage or context if needed
+      localStorage.setItem('token-shata', res.user.accessToken);
+
       navigate('/dashboard');
     } catch (err) {
       setError("Invalid Credentials");
