@@ -26,7 +26,7 @@ const PartnerDetails = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://shatabackend.in/partners")
+    fetch("https://shatabackend.in/partners")
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);

@@ -7,7 +7,7 @@ const UserCount = () => {
   const navigate = useNavigate(); // Hook for navigation
 
   useEffect(() => {
-    fetch("http://shatabackend.in/user/all")
+    fetch("https://shatabackend.in/user/all")
       .then((response) => response.json())
       .then((data) => {
         const userData = data.data || [];

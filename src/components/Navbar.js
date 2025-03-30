@@ -84,6 +84,16 @@ function Navbar() {
               >
                 Request
               </a>
+              <a
+                href="/user-count"
+                className="block px-4 py-2 hover:bg-orange-400"
+                onClick={() => {
+                  setSelectedPage('Request');
+                  setIsPagesOpen(false);
+                }}
+              >
+                User Count
+              </a>
             </div>
           )}
         </div>

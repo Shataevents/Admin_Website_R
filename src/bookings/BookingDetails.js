@@ -12,7 +12,7 @@ function BookingDetails() {
 
   // Fetch booking details from the API
   useEffect(() => {
-    fetch("http://shatabackend.in/bookings")
+    fetch("https://shatabackend.in/bookings")
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
