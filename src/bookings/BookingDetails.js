@@ -12,7 +12,7 @@ function BookingDetails() {
 
   // Fetch booking details from the API
   useEffect(() => {
-    fetch("http://shata-app-alb-933188665.ap-south-2.elb.amazonaws.com/bookings")
+    fetch("http://shatabackend.in/bookings")
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);

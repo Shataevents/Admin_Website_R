@@ -17,7 +17,7 @@ const OnlineKyc = () => {
       return;
     }
 
-    fetch(`http://shata-app-alb-933188665.ap-south-2.elb.amazonaws.com/partners/${id}`)
+    fetch(`http://shatabackend.in/partners/${id}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -38,7 +38,7 @@ const OnlineKyc = () => {
 
   // Handler for Approve button (status: "AKYC")
   const handleApprove = () => {
-    fetch(`http://shata-app-alb-933188665.ap-south-2.elb.amazonaws.com/partners/${id}`, {
+    fetch(`http://shatabackend.in/partners/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -64,7 +64,7 @@ const OnlineKyc = () => {
 
   // Handler for Reupload button (status: "RKYC")
   const handleReupload = () => {
-    fetch(`http://shata-app-alb-933188665.ap-south-2.elb.amazonaws.com/partners/${id}`, {
+    fetch(`http://shatabackend.in/partners/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -90,7 +90,7 @@ const OnlineKyc = () => {
 
   // Handler for Decline button (status: "DKYC")
   const handleDecline = () => {
-    fetch(`http://shata-app-alb-933188665.ap-south-2.elb.amazonaws.com/partners/${id}`, {
+    fetch(`http://shatabackend.in/partners/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
