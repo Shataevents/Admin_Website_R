@@ -90,7 +90,7 @@ const Inperson = () => {
 
   // Handler for Decline button (status: "Decline")
   const handleDecline = () => {
-    fetch(`http://shatabackend.in/partners/${id}`, {
+    fetch(`https://shatabackend.in/partners/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

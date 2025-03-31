@@ -90,7 +90,7 @@ const CompanyVerification = () => {
 
   // Handler for Decline button (status: "DCV")
   const handleDecline = () => {
-    fetch(`http://shatabackend.in/partners/${id}`, {
+    fetch(`https://shatabackend.in/partners/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

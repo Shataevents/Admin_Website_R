@@ -23,7 +23,7 @@ const Kyc = () => {
       return;
     }
 
-    fetch(`http://shatabackend.in/partners/${id}`)
+    fetch(`https://shatabackend.in/partners/${id}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);

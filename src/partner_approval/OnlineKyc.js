@@ -90,7 +90,7 @@ const OnlineKyc = () => {
 
   // Handler for Decline button (status: "DKYC")
   const handleDecline = () => {
-    fetch(`http://shatabackend.in/partners/${id}`, {
+    fetch(`https://shatabackend.in/partners/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

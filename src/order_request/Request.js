@@ -120,7 +120,10 @@ function Request() {
   return (
     <section className="bg-white min-h-screen items-center justify-center w-full">
       <Navbar />
-      <div className="bg-white p-4 my-4 rounded-lg shadow-md lg:mx-10">
+      <h2 className="text-2xl my-5 text-center font-bold mb-4">Requests</h2>
+      <p className=" bg-white p-6 rounded-lg text-center text-lg">This feature will be coming soon.</p>
+      {/* the below section is hidden when the request will be actived use the backend url and use the below code to display the details */}
+      <div className="bg-white p-4 my-4 rounded-lg shadow-md lg:mx-10 hidden">
         <h2 className="text-2xl  text-center font-bold mb-4">Requests</h2>
 
         <div className="space-y-4 ">
