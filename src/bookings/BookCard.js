@@ -49,7 +49,6 @@ const BookCard = () => {
               <p><strong>Name:</strong> {booking.clientDetails?.name || 'N/A'}</p>
               <p><strong>Phone Number:</strong> {booking.clientDetails?.phone || 'N/A'}</p>
               <p><strong>Event Date:</strong> {booking?.dateFrom.split("T")[0]}</p>
-              <p><strong>No. of People:</strong> {booking?.quantity || 'N/A'}</p>
               <p><strong>Budget:</strong> ₹{booking?.budget || 'N/A'}</p>
               <p><strong>Location:</strong> {booking?.location || 'N/A'}</p>
               <p><strong>Services Booked:</strong> {booking.services?.join(', ') || 'N/A'}</p>

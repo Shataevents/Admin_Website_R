@@ -1,25 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isPagesOpen, setIsPagesOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // Mobile Menu State
   const [selectedPage, setSelectedPage] = useState('Pages');
   const location = useLocation();
+  const navigate = useNavigate();
 
   const pageMap = {
     '/booking-details': 'Booking Details',
     '/partner-details': 'Partner Details',
     '/request': 'Request',
+    '/user-count': 'User Count',
   };
 
-  
-  const navigate = useNavigate();
   const handleLogout = () => {
     localStorage.removeItem('token-shata'); 
     navigate('/'); 
-  }
+  };
+
   useEffect(() => {
     const currentPage = pageMap[location.pathname] || 'Pages';
     setSelectedPage(currentPage);
@@ -28,72 +29,43 @@ function Navbar() {
   return (
     <nav className="bg-[#FCFCFC] shadow-sm shadow-black/40 text-black w-full p-4">
       <div className="container mx-auto flex justify-between items-center">
-        {/* Left side dropdown */}
-        <div className="relative text-xl">
+        
+        {/* Hamburger Menu Button (Mobile Only) */}
+        <button
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="md:hidden block focus:outline-none"
+        >
+          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
+          </svg>
+        </button>
+
+        {/* Pages Dropdown (Hidden in Mobile) */}
+        <div className="relative text-xl hidden md:block">
           <button
             onClick={() => setIsPagesOpen(!isPagesOpen)}
             className="flex items-center space-x-2 bg-orange hover:bg-orange px-4 py-2 rounded focus:outline-none"
           >
             <span>{selectedPage}</span>
-            {/* Chevron arrow that changes direction */}
-            <svg
-              className={`w-5 h-5 transition-transform ${isPagesOpen ? 'rotate-180' : ''}`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 9l-7 7-7-7"
-              />
+            <svg className={`w-5 h-5 transition-transform ${isPagesOpen ? 'rotate-180' : ''}`}
+              fill="none" stroke="currentColor" viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
           </button>
 
           {isPagesOpen && (
             <div className="absolute left-0 mt-2 w-48 bg-white text-xl rounded-md shadow-lg py-1 text-black">
-              <a
-                href="/booking-details"
-                className="block px-4 py-2 hover:bg-orange-400"
-                onClick={() => {
-                  setSelectedPage('Booking Details');
-                  setIsPagesOpen(false);
-                }}
-              >
-                Booking Details
-              </a>
-              <a
-                href="/partner-details"
-                className="block px-4 py-2 hover:bg-orange-400"
-                onClick={() => {
-                  setSelectedPage('Partner Details');
-                  setIsPagesOpen(false);
-                }}
-              >
-                Partner Details
-              </a>
-              <a
-                href="/request"
-                className="block px-4 py-2 hover:bg-orange-400"
-                onClick={() => {
-                  setSelectedPage('Request');
-                  setIsPagesOpen(false);
-                }}
-              >
-                Request
-              </a>
-              <a
-                href="/user-count"
-                className="block px-4 py-2 hover:bg-orange-400"
-                onClick={() => {
-                  setSelectedPage('Request');
-                  setIsPagesOpen(false);
-                }}
-              >
-                User Count
-              </a>
+              {Object.keys(pageMap).map((path) => (
+                <a key={path} href={path} className="block px-4 py-2 hover:bg-orange-400"
+                  onClick={() => {
+                    setSelectedPage(pageMap[path]);
+                    setIsPagesOpen(false);
+                  }}>
+                  {pageMap[path]}
+                </a>
+              ))}
             </div>
           )}
         </div>
@@ -111,41 +83,49 @@ function Navbar() {
           </h1>
         </div>
 
-        {/* Right side dropdown */}
+        {/* Right Side Account Dropdown */}
         <div className="relative text-2xl">
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="flex items-center space-x-2 bg-white px-4 py-2 rounded focus:outline-none"
           >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-              />
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
-            <span>Account</span>
+            {/* Hide "Account" text in Mobile */}
+            <span className="hidden md:inline">Account</span>
+            {/* Down Arrow */}
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
           </button>
 
           {isOpen && (
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 text-black">
-              <a href="/dashboard" className="block px-4 py-2 hover:bg-gray-100">
-                Dashboard
-              </a>
-              <div onClick={()=> handleLogout()} className="block px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                Logout
-              </div>
+              <a href="/dashboard" className="block px-4 py-2 hover:bg-gray-100">Dashboard</a>
+              <div onClick={handleLogout} className="block px-4 py-2 hover:bg-gray-100 cursor-pointer">Logout</div>
             </div>
           )}
         </div>
       </div>
+
+      {/* Mobile Menu (Replaces Pages Dropdown) */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden absolute top-16 left-0 w-full bg-white shadow-lg">
+          <div className="px-6 py-4">
+            <div className="text-xl font-semibold mb-2">Pages</div>
+            {Object.keys(pageMap).map((path) => (
+              <a key={path} href={path} className="block px-4 py-2 hover:bg-orange-400"
+                onClick={() => setIsMobileMenuOpen(false)}>
+                {pageMap[path]}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
     </nav>
   );
 }
