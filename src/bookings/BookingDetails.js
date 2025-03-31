@@ -166,7 +166,7 @@ function BookingDetails() {
                 className="bg-white p-6 rounded-lg shadow-md flex flex-col gap-4 cursor-pointer hover:shadow-lg w-full"
                 onClick={() => handleCardClick(booking)}
               >
-                <h3 className="text-xl font-semibold">{booking.eventTitle || "Not Available"}</h3>
+                <h3 className="text-xl font-semibold">{booking.eventType || "Not Available"}</h3>
                 
                 <div className="flex items-center gap-2">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -174,7 +174,7 @@ function BookingDetails() {
                   </svg>
                   <span>
                      
-                    {booking?.dateTo?.split("T")[0]}</span>
+                    {booking?.dateFrom?.split("T")[0]}</span>
                 </div>
 
                 <div className="flex flex-col gap-2">
@@ -206,7 +206,7 @@ function BookingDetails() {
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
-                  <span>{booking.planner || "Not Available"}</span>
+                  <span>{booking.partnerName || "Not Available"}</span>
                 </div>
               </div>
             ))

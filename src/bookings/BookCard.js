@@ -39,7 +39,7 @@ const BookCard = () => {
           </svg>
         </button>
 
-        <h2 className="text-2xl font-bold mb-6">{booking.eventTitle}</h2>
+        <h2 className="text-2xl font-bold mb-6">{booking.eventType}</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           {/* Client Details - Left Side */}
@@ -50,7 +50,7 @@ const BookCard = () => {
               <p><strong>Phone Number:</strong> {booking.clientDetails?.phone || 'N/A'}</p>
               <p><strong>Event Date:</strong> {booking?.dateFrom.split("T")[0]}</p>
               <p><strong>No. of People:</strong> {booking?.quantity || 'N/A'}</p>
-              <p><strong>Budget:</strong> ${booking?.budget || 'N/A'}</p>
+              <p><strong>Budget:</strong> ₹{booking?.budget || 'N/A'}</p>
               <p><strong>Location:</strong> {booking?.location || 'N/A'}</p>
               <p><strong>Services Booked:</strong> {booking.services?.join(', ') || 'N/A'}</p>
             </div>
@@ -60,10 +60,10 @@ const BookCard = () => {
           <div>
             <h3 className="text-xl font-semibold mb-3">Event Planner Details</h3>
             <div className="space-y-2">
-              <p><strong>Name:</strong> {booking.planner}</p>
+              <p><strong>Name:</strong> {booking.partnerName}</p>
               <p><strong>Company:</strong> {booking.plannerDetails?.company || 'N/A'}</p>
               <p><strong>Company Location:</strong> {booking.plannerDetails?.companyLocation || 'N/A'}</p>
-              <p><strong>Personal Phone:</strong> {booking.plannerDetails?.personalPhone || 'N/A'}</p>
+              <p><strong>Personal Phone:</strong> {booking.partnerMobile || 'N/A'}</p>
               <p><strong>Company Phone:</strong> {booking.plannerDetails?.companyPhone || 'N/A'}</p>
             </div>
           </div>
