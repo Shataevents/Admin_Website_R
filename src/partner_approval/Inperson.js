@@ -129,6 +129,9 @@ const Inperson = () => {
 
       {/* Approve, Reupload, Decline Buttons at the Bottom */}
       <div className="bg-white p-6 rounded-lg shadow-md mt-6 flex justify-center gap-6">
+        
+      {planner.status != "approved" ? (
+        <>
         <button 
           className="bg-green-500 text-white px-6 py-3 text-xl font-semibold rounded-md hover:bg-green-600 transition-all"
           onClick={handleApprove}
@@ -141,6 +144,12 @@ const Inperson = () => {
         >
           Decline
         </button>
+        </>  ) : (
+          <div className="text-green-300 font-bold">
+            {" "}
+            In-Person verification is Approved .{" "}
+          </div>
+        )}
       </div>
     </div>
   );

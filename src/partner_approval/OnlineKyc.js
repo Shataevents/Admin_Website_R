@@ -113,7 +113,7 @@ const OnlineKyc = () => {
         alert("Failed to decline planner.");
       });
   };
-
+  console.log("Planner data:", planner); // Debugging line to check fetched data
   // Handle loading state
   if (isLoading) {
     return (
@@ -135,7 +135,7 @@ const OnlineKyc = () => {
   return (
     <div className="p-6">
       {/* Back Button */}
-      <button 
+      <button
         className="flex items-center text-xl font-bold mb-4 hover:underline"
         onClick={() => navigate(-1)}
       >
@@ -151,13 +151,12 @@ const OnlineKyc = () => {
 
       {/* Two-column Layout */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-        
         {/* Left Side - Video Section */}
         <div className="bg-white border-2 border-white p-6 rounded-lg shadow-md">
           <h3 className="text-3xl font-semibold mb-2">Video Verification</h3>
           {planner.videoUrl ? (
             <video className="w-full h-64 rounded-md border-2" controls>
-              <source src={planner.videoUrl} type="video/mp4" />
+              <source src={planner?.videoUrl} type="video/mp4" />
               Your browser does not support the video tag.
             </video>
           ) : (
@@ -173,9 +172,9 @@ const OnlineKyc = () => {
           <div className="mb-4">
             <h4 className="text-xl font-bold">Aadhar Card</h4>
             {planner.governmentIdUrl ? (
-              <img 
-                src={planner.governmentIdUrl} 
-                alt="Aadhar Card" 
+              <img
+                src={planner.governmentIdUrl}
+                alt="Aadhar Card"
                 className="w-full h-40 rounded-md border-2 mt-2"
               />
             ) : (
@@ -187,9 +186,9 @@ const OnlineKyc = () => {
           <div>
             <h4 className="text-xl font-bold">PAN Card</h4>
             {planner.companyIdCardUrl ? (
-              <img 
-                src={planner.companyIdCardUrl} 
-                alt="PAN Card" 
+              <img
+                src={planner.companyIdCardUrl}
+                alt="PAN Card"
                 className="w-full h-40 rounded-md border-2 mt-2"
               />
             ) : (
@@ -201,24 +200,33 @@ const OnlineKyc = () => {
 
       {/* Approve, Reupload, Decline Buttons at the Bottom */}
       <div className="bg-white border-2 border-white p-6 rounded-lg shadow-md mt-6 flex justify-center gap-6">
-        <button 
-          className="bg-green-500 text-white px-6 py-3 text-xl font-semibold rounded hover:bg-green-600 transition-all"
-          onClick={handleApprove}
-        >
-          Approve
-        </button>
-        <button 
-          className="bg-orange-300 text-white px-6 py-3 text-xl font-semibold rounded hover:bg-orange-400 transition-all"
-          onClick={handleReupload}
-        >
-          Reupload
-        </button>
-        <button 
-          className="bg-red-500 text-white px-6 py-3 text-xl font-semibold rounded hover:bg-red-600 transition-all"
-          onClick={handleDecline}
-        >
-          Decline
-        </button>
+        {planner.status != "approved" ? (
+          <>
+            <button
+              className="bg-green-500 text-white px-6 py-3 text-xl font-semibold rounded hover:bg-green-600 transition-all"
+              onClick={handleApprove}
+            >
+              Approve
+            </button>
+            <button
+              className="bg-orange-300 text-white px-6 py-3 text-xl font-semibold rounded hover:bg-orange-400 transition-all"
+              onClick={handleReupload}
+            >
+              Reupload
+            </button>
+            <button
+              className="bg-red-500 text-white px-6 py-3 text-xl font-semibold rounded hover:bg-red-600 transition-all"
+              onClick={handleDecline}
+            >
+              Decline
+            </button>
+          </>
+        ) : (
+          <div className="text-green-300 font-bold">
+            {" "}
+            Online KYC is Approved .{" "}
+          </div>
+        )}
       </div>
     </div>
   );
