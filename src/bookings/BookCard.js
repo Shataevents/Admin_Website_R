@@ -60,7 +60,7 @@ const BookCard = () => {
             <h3 className="text-xl font-semibold mb-3">Event Planner Details</h3>
             <div className="space-y-2">
               <p><strong>Name:</strong> {booking.partnerName}</p>
-              <p><strong>Company:</strong> {booking.plannerDetails?.company || 'N/A'}</p>
+              <p><strong>Company:</strong> {booking.plannerDetails?.companyName || 'N/A'}</p>
               <p><strong>Company Location:</strong> {booking.plannerDetails?.companyLocation || 'N/A'}</p>
               <p><strong>Personal Phone:</strong> {booking.partnerMobile || 'N/A'}</p>
               <p><strong>Company Phone:</strong> {booking.plannerDetails?.companyPhone || 'N/A'}</p>

@@ -44,7 +44,7 @@ const Inperson = () => {
         "Content-Type": "application/json",
         Authorization: `Bearer YOUR_TOKEN_HERE`, // Replace with actual token
       },
-      body: JSON.stringify({ status: "Approve" }),
+      body: JSON.stringify({ status: "approved" }),
     })
       .then((response) => {
         if (!response.ok) {
@@ -62,31 +62,7 @@ const Inperson = () => {
       });
   };
 
-  // Handler for Reupload button (status: "Reupload")
-  const handleReupload = () => {
-    fetch(`https://shatabackend.in/partners/${id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer YOUR_TOKEN_HERE`, // Replace with actual token
-      },
-      body: JSON.stringify({ status: "Reupload" }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then(() => {
-        alert("Planner marked for reupload for In-person Verification!");
-        navigate(-1); // Navigate back after marking for reupload
-      })
-      .catch((error) => {
-        console.error("Error marking planner for reupload:", error);
-        alert("Failed to mark planner for reupload.");
-      });
-  };
+
 
   // Handler for Decline button (status: "Decline")
   const handleDecline = () => {
@@ -96,7 +72,7 @@ const Inperson = () => {
         "Content-Type": "application/json",
         Authorization: `Bearer YOUR_TOKEN_HERE`, // Replace with actual token
       },
-      body: JSON.stringify({ status: "Decline" }),
+      body: JSON.stringify({ status: "decline" }),
     })
       .then((response) => {
         if (!response.ok) {
@@ -159,12 +135,6 @@ const Inperson = () => {
         >
           Approve
         </button>
-        {/* <button 
-          className="bg-orange-300 text-white px-6 py-3 text-xl font-semibold rounded hover:bg-orange-400 transition-all"
-          onClick={handleReupload}
-        >
-          Reupload
-        </button> */}
         <button 
           className="bg-red-500 text-white px-6 py-3 text-xl font-semibold rounded-md hover:bg-red-600 transition-all"
           onClick={handleDecline}
