@@ -17,7 +17,7 @@ const Inperson = () => {
       return;
     }
 
-    fetch(`http://shatabackend.in/partners/${id}`)
+    fetch(`https://shatabackend.in/partners/${id}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -38,7 +38,7 @@ const Inperson = () => {
 
   // Handler for Approve button (status: "Approve")
   const handleApprove = () => {
-    fetch(`http://shatabackend.in/partners/${id}`, {
+    fetch(`https://shatabackend.in/partners/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -64,7 +64,7 @@ const Inperson = () => {
 
   // Handler for Reupload button (status: "Reupload")
   const handleReupload = () => {
-    fetch(`http://shatabackend.in/partners/${id}`, {
+    fetch(`https://shatabackend.in/partners/${id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
