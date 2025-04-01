@@ -6,8 +6,8 @@ const statusTabs = {
   pending: ["pending"],
   kyc: ["AKYC", "RKYC", "DKYC"],
   companyVerification: ["ACV", "RCV", "DCV"],
-  declined: ["Decline"],
-  approved: ["Approve"],
+  declined: ["decline"],
+  approved: ["approved"],
 };
 
 const statusLabels = {
