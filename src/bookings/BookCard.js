@@ -49,6 +49,7 @@ const BookCard = () => {
               <p><strong>Name:</strong> {booking.clientDetails?.name || 'N/A'}</p>
               <p><strong>Phone Number:</strong> {booking.clientDetails?.phone || 'N/A'}</p>
               <p><strong>Event Date:</strong> {booking?.dateFrom.split("T")[0]}</p>
+              <p><strong>Email:</strong></p>
               <p><strong>Budget:</strong> ₹{booking?.budget || 'N/A'}</p>
               <p><strong>Location:</strong> {booking?.location || 'N/A'}</p>
               <p><strong>Services Booked:</strong> {booking.services?.join(', ') || 'N/A'}</p>
@@ -64,6 +65,8 @@ const BookCard = () => {
               <p><strong>Company Location:</strong> {booking.plannerDetails?.companyLocation || 'N/A'}</p>
               <p><strong>Personal Phone:</strong> {booking.partnerMobile || 'N/A'}</p>
               <p><strong>Company Phone:</strong> {booking.plannerDetails?.companyPhone || 'N/A'}</p>
+              <p><strong>Company Email:</strong> {booking.plannerDetails?.companyEmail || 'N/A'}</p>
+              <p><strong>GST No:</strong> {booking.plannerDetails?.gst || 'N/A'}</p>
             </div>
           </div>
         </div>
