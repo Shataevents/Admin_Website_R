@@ -13,6 +13,7 @@ const BookCard = () => {
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false); 
   const [editedDetails, setEditedDetails] = useState({});
+  const [reload , setReload] = useState(false);
 
   const statusOptions = [
     "to visit",
@@ -35,12 +36,18 @@ const BookCard = () => {
         setPartnerDetails(response.data);
       })
       .catch((err) => {
+        axios.get(`https://shatabackend.in/temp-partner/${booking?.partnerId}`)
+        .then((response) => {
+          console.log("Fetched temp partner details:", response.data);
+          setPartnerDetails(response.data);
+        }).catch((error) => {
         setError("Failed to fetch partner details.");
+        } );
       })
       .finally(() => {
         setLoading(false);
       });
-  }, [booking]);
+  }, [booking,reload]);
 
   const handleEditClick = () => {
     setShowModal(true);
@@ -65,6 +72,11 @@ const BookCard = () => {
       })
       .then((response) => {
         console.log("Details saved successfully:", response.data);
+        axios.patch(`https://shatabackend.in/bookings/${booking._id}`, {
+          partnerId: response.data._id,
+        });
+        booking.partnerId = response.data._id;
+        setReload(!reload);
         alert("Details saved successfully!");
         setEditedDetails({});
         setShowModal(false);
@@ -143,7 +155,7 @@ const BookCard = () => {
             ) : partnerDetails ? (
               <div className="space-y-2">
                 <p>
-                  <strong>Name:</strong> {booking.partnerName}
+                  <strong>Name:</strong> { partnerDetails.PartnerName || booking.partnerName || "N/A"}
                 </p>
                 <p>
                   <strong>Company:</strong>{" "}
@@ -155,15 +167,15 @@ const BookCard = () => {
                 </p>
                 <p>
                   <strong>Personal Phone:</strong>{" "}
-                  {booking.partnerMobile || "N/A"}
+                  { partnerDetails.personalNumber || booking.partnerMobile ||   "N/A"}
                 </p>
                 <p>
                   <strong>Company Phone:</strong>{" "}
-                  {booking.plannerDetails?.companyPhone || "N/A"}
+                  {booking.plannerDetails?.companyPhone || partnerDetails.companyNumber || "N/A"}
                 </p>
                 <p>
                   <strong>Company Email:</strong>{" "}
-                  {partnerDetails.companyEmail || "N/A"}
+                  {partnerDetails.companyEmail || partnerDetails.companyEmailId || "N/A"}
                 </p>
                 <p>
                   <strong>GST No:</strong> {partnerDetails.gstNo || "N/A"}
