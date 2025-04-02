@@ -72,9 +72,31 @@ const BookCard = () => {
       })
       .then((response) => {
         console.log("Details saved successfully:", response.data);
-        axios.patch(`https://shatabackend.in/bookings/${booking._id}`, {
-          partnerId: response.data._id,
-        });
+        axios
+          .get(`https://shatabackend.in/bookings/${booking._id}`)
+          .then((existingBookingResponse) => {
+            const existingBookingData = existingBookingResponse.data;
+
+            // Merge existing data with the updated partnerId
+            const updatedData = {
+              ...existingBookingData,
+              partnerId: response.data._id,
+              partnerName: response.data.PartnerName,
+              partnerMobile: response.data.personalNumber,
+            };
+            // Send the patch request with the merged data
+            axios
+              .patch(`https://shatabackend.in/bookings/${booking._id}`, updatedData)
+              .then(() => {
+                console.log("Partner ID updated successfully!");
+              })
+              .catch((error) => {
+                console.error("Error updating Partner ID:", error);
+              });
+          })
+          .catch((error) => {
+            console.error("Error fetching existing booking data:", error);
+          });
         booking.partnerId = response.data._id;
         setReload(!reload);
         alert("Details saved successfully!");
