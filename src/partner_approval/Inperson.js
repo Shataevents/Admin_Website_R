@@ -44,7 +44,10 @@ const Inperson = () => {
         "Content-Type": "application/json",
         Authorization: `Bearer YOUR_TOKEN_HERE`, // Replace with actual token
       },
-      body: JSON.stringify({ status: "approved" }),
+      body: JSON.stringify({
+        status: "approved", // Existing status field
+        ipvStatus: "approved", // New field to indicate In person status
+      }),
     })
       .then((response) => {
         if (!response.ok) {
@@ -72,7 +75,10 @@ const Inperson = () => {
         "Content-Type": "application/json",
         Authorization: `Bearer YOUR_TOKEN_HERE`, // Replace with actual token
       },
-      body: JSON.stringify({ status: "decline" }),
+      body: JSON.stringify({
+        status: "decline", // Existing status field
+        ipvStatus: "decline", // New field to indicate Inperson status
+      }),
     })
       .then((response) => {
         if (!response.ok) {

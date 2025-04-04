@@ -8,6 +8,10 @@ const OnlineKyc = () => {
   const [planner, setPlanner] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showReuploadPopup, setShowReuploadPopup] = useState(false); // State to show/hide popup
+  const [reuploadReason, setReuploadReason] = useState(""); // State to store the reason
+  const [showDeclinePopup, setShowDeclinePopup] = useState(false); // State to show/hide decline popup
+  const [declineReason, setDeclineReason] = useState(""); // State to store the decline reason
 
   // Fetch planner details using the ID
   useEffect(() => {
@@ -44,7 +48,10 @@ const OnlineKyc = () => {
         "Content-Type": "application/json",
         Authorization: `Bearer YOUR_TOKEN_HERE`, // Replace with actual token
       },
-      body: JSON.stringify({ status: "AKYC" }),
+      body: JSON.stringify({
+        status: "AKYC", // Existing status field
+        kycStatus: "AKYC", // New field to indicate KYC status
+      }),
     })
       .then((response) => {
         if (!response.ok) {
@@ -64,13 +71,22 @@ const OnlineKyc = () => {
 
   // Handler for Reupload button (status: "RKYC")
   const handleReupload = () => {
+    if (!reuploadReason.trim()) {
+      alert("Please enter a reason for reuploadation.");
+      return;
+    }
+
     fetch(`https://shatabackend.in/partners/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer YOUR_TOKEN_HERE`, // Replace with actual token
       },
-      body: JSON.stringify({ status: "RKYC" }),
+      body: JSON.stringify({
+        status: "RKYC", // Existing status field
+        kycStatus: "RKYC", // New field to indicate KYC status
+        reason: `REUPLOAD:- ${reuploadReason}`, // Add reason with "REUPLOAD" keyword
+      }),
     })
       .then((response) => {
         if (!response.ok) {
@@ -80,6 +96,7 @@ const OnlineKyc = () => {
       })
       .then(() => {
         alert("Planner marked for reupload for Online KYC!");
+        setShowReuploadPopup(false); // Close the popup
         navigate(-1); // Navigate back after marking for reupload
       })
       .catch((error) => {
@@ -90,13 +107,22 @@ const OnlineKyc = () => {
 
   // Handler for Decline button (status: "DKYC")
   const handleDecline = () => {
+    if (!declineReason.trim()) {
+      alert("Please enter a reason for declining.");
+      return;
+    }
+
     fetch(`https://shatabackend.in/partners/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer YOUR_TOKEN_HERE`, // Replace with actual token
       },
-      body: JSON.stringify({ status: "DKYC" }),
+      body: JSON.stringify({
+        status: "DKYC", // Existing status field
+        kycStatus: "DKYC", // New field to indicate KYC status
+        reason: `DECLINE:- ${declineReason}`, // Add reason with "DECLINE" keyword
+      }),
     })
       .then((response) => {
         if (!response.ok) {
@@ -106,6 +132,7 @@ const OnlineKyc = () => {
       })
       .then(() => {
         alert("Planner declined for Online KYC!");
+        setShowDeclinePopup(false); // Close the popup
         navigate(-1); // Navigate back after declining
       })
       .catch((error) => {
@@ -113,7 +140,7 @@ const OnlineKyc = () => {
         alert("Failed to decline planner.");
       });
   };
-  console.log("Planner data:", planner); // Debugging line to check fetched data
+
   // Handle loading state
   if (isLoading) {
     return (
@@ -200,7 +227,19 @@ const OnlineKyc = () => {
 
       {/* Approve, Reupload, Decline Buttons at the Bottom */}
       <div className="bg-white border-2 border-white p-6 rounded-lg shadow-md mt-6 flex justify-center gap-6">
-        {planner.status != "approved" ? (
+        {planner.status === "AKYC" ? (
+          <div className="text-green-300 font-bold">Online KYC is Approved.</div>
+        ) : planner.status === "RKYC" ? (
+          <div className="text-orange-500 font-bold">
+            Planner marked for reupload. <br />
+            <span className="text-gray-600 text-lg">{planner.reason}</span>
+          </div>
+        ) : planner.status === "DKYC" ? (
+          <div className="text-red-500 font-bold">
+            Planner declined. <br />
+            <span className="text-gray-600 text-lg">{planner.reason}</span>
+          </div>
+        ) : (
           <>
             <button
               className="bg-green-500 text-white px-6 py-3 text-xl font-semibold rounded hover:bg-green-600 transition-all"
@@ -210,24 +249,83 @@ const OnlineKyc = () => {
             </button>
             <button
               className="bg-orange-300 text-white px-6 py-3 text-xl font-semibold rounded hover:bg-orange-400 transition-all"
-              onClick={handleReupload}
+              onClick={() => setShowReuploadPopup(true)} // Show reupload popup on click
             >
               Reupload
             </button>
             <button
               className="bg-red-500 text-white px-6 py-3 text-xl font-semibold rounded hover:bg-red-600 transition-all"
-              onClick={handleDecline}
+              onClick={() => setShowDeclinePopup(true)} // Show decline popup on click
             >
               Decline
             </button>
           </>
-        ) : (
-          <div className="text-green-300 font-bold">
-            {" "}
-            Online KYC is Approved .{" "}
-          </div>
         )}
       </div>
+
+      {/* Reupload Popup */}
+      {showReuploadPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+            <h2 className="text-2xl font-bold mb-4">
+              What is the reason for reuploadation?
+            </h2>
+            <textarea
+              className="w-full p-2 border rounded-md mb-4"
+              rows="4"
+              placeholder="Enter the reason here..."
+              value={reuploadReason}
+              onChange={(e) => setReuploadReason(e.target.value)}
+            ></textarea>
+            <div className="flex justify-end gap-4">
+              <button
+                className="bg-gray-300 text-black px-4 py-2 rounded-md hover:bg-gray-400"
+                onClick={() => setShowReuploadPopup(false)} // Close popup
+              >
+                Cancel
+              </button>
+              <button
+                className="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600"
+                onClick={handleReupload} // Submit reason
+              >
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Decline Popup */}
+      {showDeclinePopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+            <h2 className="text-2xl font-bold mb-4">
+              What is the reason for declining?
+            </h2>
+            <textarea
+              className="w-full p-2 border rounded-md mb-4"
+              rows="4"
+              placeholder="Enter the reason here..."
+              value={declineReason}
+              onChange={(e) => setDeclineReason(e.target.value)}
+            ></textarea>
+            <div className="flex justify-end gap-4">
+              <button
+                className="bg-gray-300 text-black px-4 py-2 rounded-md hover:bg-gray-400"
+                onClick={() => setShowDeclinePopup(false)} // Close popup
+              >
+                Cancel
+              </button>
+              <button
+                className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+                onClick={handleDecline} // Submit reason
+              >
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
