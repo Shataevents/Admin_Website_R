@@ -196,14 +196,14 @@ const CompanyVerification = () => {
 
       {/* Approve, Reupload, Decline Buttons */}
       <div className="bg-white p-6 rounded-lg shadow-md mt-6 flex justify-center gap-6">
-        {planner.status === "ACV" ? (
+        {planner.status === "ACV" || planner.cvStatus === "ACV" || planner.status === "approved" ? ( // Check for ACV or approved status
           <div className="text-green-300 font-bold">Company verification is Approved.</div>
-        ) : planner.status === "RCV" ? (
+        ) : planner.status === "RCV" || planner.cvStatus === "RCV" ? ( // Check for Reupload status
           <div className="text-orange-500 font-bold">
             Planner marked for reupload. <br />
             <span className="text-gray-600 text-lg">{planner.reason}</span>
           </div>
-        ) : planner.status === "DCV" ? (
+        ) : planner.status === "DCV" || planner.cvStatus === "DCV" ? ( // Check for Decline status
           <div className="text-red-500 font-bold">
             Planner declined. <br />
             <span className="text-gray-600 text-lg">{planner.reason}</span>
