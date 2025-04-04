@@ -3,9 +3,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa"; // Import back icon
 
 const verificationSteps = [
-  { title: "Online KYC", description: "See the Video file and uploaded documents", path: "online-kyc" },
-  { title: "Company Verification", description: "Verify the company documents", path: "company-kyc" },
-  { title: "In-person Verification", description: "Schedule an in-person verification with a partner.", path: "in-person" },
+  { title: "Online KYC", description: "See the Video file and uploaded documents", path: "online-kyc", statusKey: "kycStatus", validStatuses: ["AKYC", "RKYC", "DKYC"] },
+  { title: "Company Verification", description: "Verify the company documents", path: "company-kyc", statusKey: "cvStatus", validStatuses: ["ACV", "RCV", "DCV"] },
+  { title: "In-person Verification", description: "Schedule an in-person verification with a partner.", path: "in-person", statusKey: "ipvStatus", validStatuses: ["decline", "approved"] },
 ];
 
 const Kyc = () => {
@@ -31,7 +31,6 @@ const Kyc = () => {
         return response.json();
       })
       .then((data) => {
-        // Assuming the API returns the planner object directly (not wrapped in a "data" field)
         setPlanner(data);
       })
       .catch((error) => {
@@ -56,10 +55,25 @@ const Kyc = () => {
   if (error || !planner || !planner.name) {
     return (
       <div className="p-6 text-center text-gray-600 text-xl">
-        {error || "No partner done till now."}
+        {error || "No partner details found."}
       </div>
     );
   }
+
+  // Determine if a step is accessible based on the planner's status
+  const isStepAccessible = (index) => {
+    if (index === 0) return true; // First step is always accessible
+    const previousStep = verificationSteps[index - 1];
+    const previousStatus = planner[previousStep.statusKey];
+
+    // If the previous step is in "Reupload" or "Declined" status, block progression
+    if (["RKYC", "RCV", "DKYC", "DCV"].includes(previousStatus)) {
+      return false;
+    }
+
+    // Otherwise, check if the previous step's status is valid
+    return previousStep.validStatuses.includes(previousStatus);
+  };
 
   return (
     <div className="p-6">
@@ -84,8 +98,10 @@ const Kyc = () => {
         {verificationSteps.map((step, index) => (
           <div 
             key={index} 
-            className="bg-white border-white p-4 rounded-lg shadow-lg border-2 cursor-pointer hover:bg-orange-100 transition-all"
-            onClick={() => navigate(`/partner-details/kyc/${step.path}/${id}`)} // Pass ID in URL for further navigation
+            className={`bg-white border-white p-4 rounded-lg shadow-lg border-2 transition-all ${
+              isStepAccessible(index) ? "cursor-pointer hover:bg-orange-100" : "opacity-50 cursor-not-allowed"
+            }`}
+            onClick={() => isStepAccessible(index) && navigate(`/partner-details/kyc/${step.path}/${id}`)} // Navigate only if accessible
           >
             <h3 className="font-bold text-2xl">{step.title}</h3>
             <p className="text-black/80 text-lg">{step.description}</p>

@@ -227,7 +227,7 @@ const OnlineKyc = () => {
 
       {/* Approve, Reupload, Decline Buttons at the Bottom */}
       <div className="bg-white border-2 border-white p-6 rounded-lg shadow-md mt-6 flex justify-center gap-6">
-        {planner.kycStatus === "AKYC" || planner.status === "approved" ? ( // Check if KYC is approved or status is approved
+        {planner.kycStatus === "AKYC" ? ( // Check if KYC is approved or status is approved
           <div className="text-green-300 font-bold">Online KYC is Approved.</div>
         ) : planner.kycStatus === "RKYC" ? ( // Check if KYC is marked for reupload
           <div className="text-orange-500 font-bold">
