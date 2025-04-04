@@ -176,6 +176,8 @@ const OnlineKyc = () => {
 
       <h2 className="text-2xl font-bold">Online KYC Verification</h2>
 
+
+
       {/* Two-column Layout */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
         {/* Left Side - Video Section */}
@@ -225,47 +227,67 @@ const OnlineKyc = () => {
         </div>
       </div>
 
+     {/* Status Section */}
+     <div className="bg-white p-6 rounded-lg shadow-md mt-6 flex justify-center gap-6">
+     {planner.kycStatus === "AKYC" ? (
+        <div className="text-green-500 font-bold text-center mb-6">
+          Online KYC is Approved.
+        </div>
+      ) : planner.kycStatus === "RKYC" ? (
+        <div className="text-orange-500 font-bold text-center mb-6">
+          Planner marked for reupload. <br />
+          <span className="text-gray-600 text-lg">{planner.reason || "No reason provided."}</span>
+        </div>
+      ) : planner.kycStatus === "DKYC" ? (
+        <div className="text-red-500 font-bold text-center mb-6">
+          Planner declined. <br />
+          <span className="text-gray-600 text-lg">{planner.reason || "No reason provided."}</span>
+        </div>
+      ) : null}
+     </div>
+     
+
+
       {/* Approve, Reupload, Decline Buttons at the Bottom */}
       <div className="bg-white border-2 border-white p-6 rounded-lg shadow-md mt-6 flex justify-center gap-6">
-        {planner.kycStatus === "AKYC" ? ( // Check if KYC is approved or status is approved
-          <div className="text-green-300 font-bold">Online KYC is Approved.</div>
-        ) : planner.kycStatus === "RKYC" ? ( // Check if KYC is marked for reupload
-          <div className="text-orange-500 font-bold">
-            Planner marked for reupload. <br />
-            <span className="text-gray-600 text-lg">{planner.reason}</span>
-          </div>
-        ) : planner.kycStatus === "DKYC" ? ( // Check if KYC is declined
-          <div className="text-red-500 font-bold">
-            Planner declined. <br />
-            <span className="text-gray-600 text-lg">{planner.reason}</span>
-          </div>
-        ) : (
-          <>
-            {/* Approve Button */}
-            <button
-              className="bg-green-500 text-white px-6 py-3 text-xl font-semibold rounded hover:bg-green-600 transition-all"
-              onClick={handleApprove}
-            >
-              Approve
-            </button>
+        {/* Approve Button */}
+        <button
+          className={`px-6 py-3 text-xl font-semibold rounded-md transition-all ${
+            ["AKYC", "RKYC", "DKYC"].includes(planner.kycStatus)
+              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+              : "bg-green-500 text-white hover:bg-green-600"
+          }`}
+          onClick={["AKYC", "RKYC", "DKYC"].includes(planner.kycStatus) ? null : handleApprove}
+          disabled={["AKYC", "RKYC", "DKYC"].includes(planner.kycStatus)}
+        >
+          Approve
+        </button>
 
-            {/* Reupload Button */}
-            <button
-              className="bg-orange-300 text-white px-6 py-3 text-xl font-semibold rounded hover:bg-orange-400 transition-all"
-              onClick={() => setShowReuploadPopup(true)} // Show reupload popup on click
-            >
-              Reupload
-            </button>
+        {/* Reupload Button */}
+        <button
+          className={`px-6 py-3 text-xl font-semibold rounded-md transition-all ${
+            ["AKYC", "RKYC", "DKYC"].includes(planner.kycStatus)
+              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+              : "bg-orange-300 text-white hover:bg-orange-400"
+          }`}
+          onClick={["AKYC", "RKYC", "DKYC"].includes(planner.kycStatus) ? null : () => setShowReuploadPopup(true)}
+          disabled={["AKYC", "RKYC", "DKYC"].includes(planner.kycStatus)}
+        >
+          Reupload
+        </button>
 
-            {/* Decline Button */}
-            <button
-              className="bg-red-500 text-white px-6 py-3 text-xl font-semibold rounded hover:bg-red-600 transition-all"
-              onClick={() => setShowDeclinePopup(true)} // Show decline popup on click
-            >
-              Decline
-            </button>
-          </>
-        )}
+        {/* Decline Button */}
+        <button
+          className={`px-6 py-3 text-xl font-semibold rounded-md transition-all ${
+            ["AKYC", "RKYC", "DKYC"].includes(planner.kycStatus)
+              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+              : "bg-red-500 text-white hover:bg-red-600"
+          }`}
+          onClick={["AKYC", "RKYC", "DKYC"].includes(planner.kycStatus) ? null : () => setShowDeclinePopup(true)}
+          disabled={["AKYC", "RKYC", "DKYC"].includes(planner.kycStatus)}
+        >
+          Decline
+        </button>
       </div>
 
       {/* Reupload Popup */}

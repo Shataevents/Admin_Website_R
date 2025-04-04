@@ -62,6 +62,9 @@ const Kyc = () => {
 
   // Determine if a step is accessible based on the planner's status
   const isStepAccessible = (index) => {
+    if (planner.status === "decline") {
+      return true; // Allow access to all steps if the overall status is "decline"
+    }
     if (index === 0) return true; // First step is always accessible
     const previousStep = verificationSteps[index - 1];
     const previousStatus = planner[previousStep.statusKey];
@@ -94,7 +97,7 @@ const Kyc = () => {
         <p className="text-xl"><strong>Company Email:</strong> {planner.companyEmail || "Not Available"}</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6" >
         {verificationSteps.map((step, index) => (
           <div 
             key={index} 
@@ -105,6 +108,8 @@ const Kyc = () => {
           >
             <h3 className="font-bold text-2xl">{step.title}</h3>
             <p className="text-black/80 text-lg">{step.description}</p>
+            
+              {isStepAccessible(index) ? "View Details" : "Disabled"}
           </div>
         ))}
       </div>

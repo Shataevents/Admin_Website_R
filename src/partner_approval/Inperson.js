@@ -133,29 +133,47 @@ const Inperson = () => {
         <p className="text-xl"><strong>Company Location:</strong> {planner.companyLocation}</p>
       </div>
 
-      {/* Approve, Reupload, Decline Buttons at the Bottom */}
+      {/* Status Section */}
       <div className="bg-white p-6 rounded-lg shadow-md mt-6 flex justify-center gap-6">
-        
-      {planner.status != "approved" ? (
-        <>
-        <button 
-          className="bg-green-500 text-white px-6 py-3 text-xl font-semibold rounded-md hover:bg-green-600 transition-all"
-          onClick={handleApprove}
+      {planner.ipvStatus === "approved" ? (
+        <div className="text-green-500 font-bold text-center mb-6">
+          In-Person verification is Approved.
+        </div>
+      ) : planner.ipvStatus === "decline" ? (
+        <div className="text-red-500 font-bold text-center mb-6">
+          In-Person verification is Declined.
+        </div>
+      ) : null}
+      </div>
+      
+
+      {/* Approve, Decline Buttons */}
+      <div className="bg-white p-6 rounded-lg shadow-md mt-6 flex justify-center gap-6">
+        {/* Approve Button */}
+        <button
+          className={`px-6 py-3 text-xl font-semibold rounded-md transition-all ${
+            planner.ipvStatus === "approved" || planner.ipvStatus === "decline"
+              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+              : "bg-green-500 text-white hover:bg-green-600"
+          }`}
+          onClick={planner.ipvStatus === "approved" || planner.ipvStatus === "decline" ? null : handleApprove}
+          disabled={planner.ipvStatus === "approved" || planner.ipvStatus === "decline"}
         >
           Approve
         </button>
-        <button 
-          className="bg-red-500 text-white px-6 py-3 text-xl font-semibold rounded-md hover:bg-red-600 transition-all"
-          onClick={handleDecline}
+
+        {/* Decline Button */}
+        <button
+          className={`px-6 py-3 text-xl font-semibold rounded-md transition-all ${
+            planner.ipvStatus === "approved" || planner.ipvStatus === "decline"
+              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+              : "bg-red-500 text-white hover:bg-red-600"
+          }`}
+          onClick={planner.ipvStatus === "approved" || planner.ipvStatus === "decline" ? null : handleDecline}
+          disabled={planner.ipvStatus === "approved" || planner.ipvStatus === "decline"}
         >
           Decline
         </button>
-        </>  ) : (
-          <div className="text-green-300 font-bold">
-            {" "}
-            In-Person verification is Approved .{" "}
-          </div>
-        )}
       </div>
     </div>
   );

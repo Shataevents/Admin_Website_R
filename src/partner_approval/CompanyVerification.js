@@ -194,47 +194,65 @@ const CompanyVerification = () => {
         </div>
       </div>
 
+      {/* Status Section */}
+      <div className="bg-white p-6 rounded-lg shadow-md mt-6 flex justify-center gap-6">
+      {planner.cvStatus === "ACV" || planner.status === "ACV" ? (
+        <div className="text-green-500 font-bold text-center mb-6">
+          Company verification is Approved.
+        </div>
+      ) : planner.cvStatus === "RCV" || planner.status === "RCV" ? (
+        <div className="text-orange-500 font-bold text-center mb-6">
+          Planner marked for reupload. <br />
+          <span className="text-gray-600 text-lg">{planner.reason || "No reason provided."}</span>
+        </div>
+      ) : planner.cvStatus === "DCV" || planner.status === "DCV" ? (
+        <div className="text-red-500 font-bold text-center mb-6">
+          Planner declined. <br />
+          <span className="text-gray-600 text-lg">{planner.reason || "No reason provided."}</span>
+        </div>
+      ) : null}
+      </div>
+      
       {/* Approve, Reupload, Decline Buttons */}
       <div className="bg-white p-6 rounded-lg shadow-md mt-6 flex justify-center gap-6">
-        {planner.status === "ACV" || planner.cvStatus === "ACV" ? ( // Check for ACV or approved status
-          <div className="text-green-300 font-bold">Company verification is Approved.</div>
-        ) : planner.status === "RCV" || planner.cvStatus === "RCV" ? ( // Check for Reupload status
-          <div className="text-orange-500 font-bold">
-            Planner marked for reupload. <br />
-            <span className="text-gray-600 text-lg">{planner.reason}</span>
-          </div>
-        ) : planner.status === "DCV" || planner.cvStatus === "DCV" ? ( // Check for Decline status
-          <div className="text-red-500 font-bold">
-            Planner declined. <br />
-            <span className="text-gray-600 text-lg">{planner.reason}</span>
-          </div>
-        ) : (
-          <>
-            {/* Approve Button */}
-            <button
-              className="bg-green-500 text-white px-6 py-3 text-xl font-semibold rounded-md hover:bg-green-600 transition-all"
-              onClick={() => handleApprove("ACV", "Planner approved successfully!")} // Call handler with "ACV" status
-            >
-              Approve
-            </button>
+        {/* Approve Button */}
+        <button
+          className={`px-6 py-3 text-xl font-semibold rounded-md transition-all ${
+            ["ACV", "RCV", "DCV"].includes(planner.cvStatus)
+              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+              : "bg-green-500 text-white hover:bg-green-600"
+          }`}
+          onClick={["ACV", "RCV", "DCV"].includes(planner.cvStatus) ? null : () => handleApprove("ACV", "Planner approved successfully!")}
+          disabled={["ACV", "RCV", "DCV"].includes(planner.cvStatus)}
+        >
+          Approve
+        </button>
 
-            {/* Reupload Button */}
-            <button
-              className="bg-orange-300 text-white px-6 py-3 text-xl font-semibold rounded hover:bg-orange-400 transition-all"
-              onClick={() => setShowReuploadPopup(true)} // Open Reupload popup
-            >
-              Reupload
-            </button>
+        {/* Reupload Button */}
+        <button
+          className={`px-6 py-3 text-xl font-semibold rounded-md transition-all ${
+            ["ACV", "RCV", "DCV"].includes(planner.cvStatus)
+              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+              : "bg-orange-300 text-white hover:bg-orange-400"
+          }`}
+          onClick={["ACV", "RCV", "DCV"].includes(planner.cvStatus) ? null : () => setShowReuploadPopup(true)}
+          disabled={["ACV", "RCV", "DCV"].includes(planner.cvStatus)}
+        >
+          Reupload
+        </button>
 
-            {/* Decline Button */}
-            <button
-              className="bg-red-500 text-white px-6 py-3 text-xl font-semibold rounded-md hover:bg-red-600 transition-all"
-              onClick={() => setShowDeclinePopup(true)} // Open Decline popup
-            >
-              Decline
-            </button>
-          </>
-        )}
+        {/* Decline Button */}
+        <button
+          className={`px-6 py-3 text-xl font-semibold rounded-md transition-all ${
+            ["ACV", "RCV", "DCV"].includes(planner.cvStatus)
+              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+              : "bg-red-500 text-white hover:bg-red-600"
+          }`}
+          onClick={["ACV", "RCV", "DCV"].includes(planner.cvStatus) ? null : () => setShowDeclinePopup(true)}
+          disabled={["ACV", "RCV", "DCV"].includes(planner.cvStatus)}
+        >
+          Decline
+        </button>
       </div>
 
       {previewImage && (
