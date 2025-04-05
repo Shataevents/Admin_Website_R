@@ -13,6 +13,8 @@ const OnlineKyc = () => {
   const [reuploadReason, setReuploadReason] = useState("");
   const [showDeclinePopup, setShowDeclinePopup] = useState(false);
   const [declineReason, setDeclineReason] = useState("");
+  const [previewImage, setPreviewImage] = useState(null); // State for preview image
+  const [previewVideo, setPreviewVideo] = useState(null); // State for video preview
   const isSuperAdmin = new URLSearchParams(location.search).get("superAdmin") === "true";
 
   useEffect(() => {
@@ -160,7 +162,11 @@ const OnlineKyc = () => {
         <div className="bg-white border-2 border-white p-6 rounded-lg shadow-md">
           <h3 className="text-3xl font-semibold mb-2">Video Verification</h3>
           {planner.videoUrl ? (
-            <video className="w-full h-64 rounded-md border-2" controls>
+            <video
+              className="w-full h-64 rounded-md border-2 cursor-pointer"
+              onClick={() => setPreviewVideo(planner.videoUrl)} // Set preview video
+              controls
+            >
               <source src={planner?.videoUrl} type="video/mp4" />
               Your browser does not support the video tag.
             </video>
@@ -174,19 +180,30 @@ const OnlineKyc = () => {
           <div className="mb-4">
             <h4 className="text-xl font-bold">Aadhar Card</h4>
             {planner.governmentIdUrl ? (
-              <img src={planner.governmentIdUrl} alt="Aadhar Card" className="w-full h-40 rounded-md border-2 mt-2" />
+              <img
+                src={planner.governmentIdUrl}
+                alt="Aadhar Card"
+                className="w-full h-40 rounded-md border-2 mt-2 cursor-pointer"
+                onClick={() => setPreviewImage(planner.governmentIdUrl)} // Set preview image
+              />
             ) : (
               <p className="text-gray-600 mt-2">Aadhar Card not uploaded.</p>
             )}
           </div>
-          <div>
+          <div className="mb-4">
             <h4 className="text-xl font-bold">PAN Card</h4>
             {planner.companyIdCardUrl ? (
-              <img src={planner.companyIdCardUrl} alt="PAN Card" className="w-full h-40 rounded-md border-2 mt-2" />
+              <img
+                src={planner.companyIdCardUrl}
+                alt="PAN Card"
+                className="w-full h-40 rounded-md border-2 mt-2 cursor-pointer"
+                onClick={() => setPreviewImage(planner.companyIdCardUrl)} // Set preview image
+              />
             ) : (
               <p className="text-gray-600 mt-2">PAN Card not uploaded.</p>
             )}
           </div>
+          
         </div>
       </div>
 
@@ -298,6 +315,36 @@ const OnlineKyc = () => {
                 Submit
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Preview Modal */}
+      {previewImage && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <img src={previewImage} alt="Preview" className="max-w-[400px] max-h-screen rounded-md" />
+            <button
+              className="mt-4 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+              onClick={() => setPreviewImage(null)} // Close preview
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Video Preview Modal */}
+      {previewVideo && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <video src={previewVideo} controls className="max-w-2xl max-h-screen rounded-md" />
+            <button
+              className="mt-4 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+              onClick={() => setPreviewVideo(null)} // Close preview
+            >
+              Close
+            </button>
           </div>
         </div>
       )}
