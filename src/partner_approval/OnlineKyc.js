@@ -179,12 +179,12 @@ const OnlineKyc = () => {
           <h3 className="text-3xl font-semibold mb-4">Uploaded Documents</h3>
           <div className="mb-4">
             <h4 className="text-xl font-bold">Aadhar Card</h4>
-            {planner.governmentIdUrl ? (
+            {planner.aadharUrl ? (
               <img
-                src={planner.governmentIdUrl}
+                src={planner.aadharUrl}
                 alt="Aadhar Card"
-                className="w-full h-40 rounded-md border-2 mt-2 cursor-pointer"
-                onClick={() => setPreviewImage(planner.governmentIdUrl)} // Set preview image
+                className="w-50 h-40 rounded-md border-2 mt-2 cursor-pointer"
+                onClick={() => setPreviewImage(planner.aadharUrl)} // Set preview image
               />
             ) : (
               <p className="text-gray-600 mt-2">Aadhar Card not uploaded.</p>
@@ -192,12 +192,12 @@ const OnlineKyc = () => {
           </div>
           <div className="mb-4">
             <h4 className="text-xl font-bold">PAN Card</h4>
-            {planner.companyIdCardUrl ? (
+            {planner.governmentIdUrl ? (
               <img
-                src={planner.companyIdCardUrl}
+                src={planner.governmentIdUrl}
                 alt="PAN Card"
-                className="w-full h-40 rounded-md border-2 mt-2 cursor-pointer"
-                onClick={() => setPreviewImage(planner.companyIdCardUrl)} // Set preview image
+                className="w-50 h-40 rounded-md border-2 mt-2 cursor-pointer"
+                onClick={() => setPreviewImage(planner.governmentIdUrl)} // Set preview image
               />
             ) : (
               <p className="text-gray-600 mt-2">PAN Card not uploaded.</p>
