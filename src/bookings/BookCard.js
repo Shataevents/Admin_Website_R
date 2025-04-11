@@ -7,13 +7,14 @@ const BookCard = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const booking = location.state || {};
-  const [status, setStatus] = useState("upcoming"); // Default status
+  const [status, setStatus] = useState("upcoming");
   const [partnerDetails, setPartnerDetails] = useState(null);
+  const [clientDetails, setClientDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showModal, setShowModal] = useState(false); 
+  const [showModal, setShowModal] = useState(false);
   const [editedDetails, setEditedDetails] = useState({});
-  const [reload , setReload] = useState(false);
+  const [reload, setReload] = useState(false);
 
   const statusOptions = [
     "to visit",
@@ -25,29 +26,51 @@ const BookCard = () => {
   ];
 
   useEffect(() => {
-    if (!booking?.partnerId) {
+    console.log("Booking object:", booking);
+    if (!booking?.partnerId || !booking?.userId) {
+      console.log("Missing partnerId or userId:", booking);
       setLoading(false);
       return;
     }
 
-    axios
+    setLoading(true);
+    setError(null);
+
+    const fetchPartnerDetails = axios
       .get(`https://shatabackend.in/partners/${booking?.partnerId}`)
       .then((response) => {
+        console.log("Partner response:", response.data);
         setPartnerDetails(response.data);
       })
       .catch((err) => {
-        axios.get(`https://shatabackend.in/temp-partner/${booking?.partnerId}`)
-        .then((response) => {
-          console.log("Fetched temp partner details:", response.data);
-          setPartnerDetails(response.data);
-        }).catch((error) => {
-        setError("Failed to fetch partner details.");
-        } );
+        return axios
+          .get(`https://shatabackend.in/temp-partner/${booking?.partnerId}`)
+          .then((response) => {
+            console.log("Temp partner response:", response.data);
+            setPartnerDetails(response.data);
+          })
+          .catch((error) => {
+            console.error("Partner fetch error:", error);
+            setError("Failed to fetch partner details.");
+          });
+      });
+
+    const fetchClientDetails = axios
+      .get(`https://shatabackend.in/user/${booking?.userId}`)
+      .then((response) => {
+        console.log("Client response:", response.data);
+        setClientDetails(response.data); // Set the entire response
       })
+      .catch((error) => {
+        console.error("Client fetch error:", error);
+        setError("Failed to fetch client details.");
+      });
+
+    Promise.all([fetchPartnerDetails, fetchClientDetails])
       .finally(() => {
         setLoading(false);
       });
-  }, [booking,reload]);
+  }, [booking, reload]);
 
   const handleEditClick = () => {
     setShowModal(true);
@@ -76,15 +99,12 @@ const BookCard = () => {
           .get(`https://shatabackend.in/bookings/${booking._id}`)
           .then((existingBookingResponse) => {
             const existingBookingData = existingBookingResponse.data;
-
-            // Merge existing data with the updated partnerId
             const updatedData = {
               ...existingBookingData,
               partnerId: response.data._id,
               partnerName: response.data.PartnerName,
               partnerMobile: response.data.personalNumber,
             };
-            // Send the patch request with the merged data
             axios
               .patch(`https://shatabackend.in/bookings/${booking._id}`, updatedData)
               .then(() => {
@@ -107,7 +127,6 @@ const BookCard = () => {
         console.error("Error saving details:", error);
         alert("Error saving details. Please try again.");
       });
-    setShowModal(false);
   };
 
   return (
@@ -138,32 +157,39 @@ const BookCard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div>
             <h3 className="text-xl font-semibold mb-3">Client Details</h3>
-            <div className="space-y-2">
-              <p>
-                <strong>Name:</strong> {booking.clientDetails?.name || "N/A"}
-              </p>
-              <p>
-                <strong>Phone Number:</strong>{" "}
-                {booking.clientDetails?.phone || "N/A"}
-              </p>
-              <p>
-                <strong>Event Date:</strong>{" "}
-                {booking?.dateFrom?.split("T")[0] || "N/A"}
-              </p>
-              <p>
-                <strong>Email: </strong> {booking?.email || "NA"}
-              </p>
-              <p>
-                <strong>Budget:</strong> ₹{booking?.budget || "N/A"}
-              </p>
-              <p>
-                <strong>Location:</strong> {booking?.location || "N/A"}
-              </p>
-              <p>
-                <strong>Services Booked:</strong>{" "}
-                {booking.services?.join(", ") || "N/A"}
-              </p>
-            </div>
+            {loading ? (
+              <p>Loading client details...</p>
+            ) : error ? (
+              <p className="text-red-500">{error}</p>
+            ) : clientDetails && clientDetails.data ? (
+              <div className="space-y-2">
+                <p>
+                  <strong>Name:</strong> {clientDetails.data.fullName || "N/A"}
+                </p>
+                <p>
+                  <strong>Phone Number:</strong> {clientDetails.data.phone || "N/A"}
+                </p>
+                <p>
+                  <strong>Event Date:</strong>{" "}
+                  {booking?.dateFrom?.split("T")[0] || "N/A"}
+                </p>
+                <p>
+                  <strong>Email:</strong> {clientDetails.data.email || "N/A"}
+                </p>
+                <p>
+                  <strong>Budget:</strong> ₹{booking?.budget || "N/A"}
+                </p>
+                <p>
+                  <strong>Location:</strong> {booking?.location || "N/A"}
+                </p>
+                <p>
+                  <strong>Services Booked:</strong>{" "}
+                  {booking.services?.join(", ") || "N/A"}
+                </p>
+              </div>
+            ) : (
+              <p className="text-gray-500">Client details not found.</p>
+            )}
           </div>
 
           <div>
@@ -177,7 +203,8 @@ const BookCard = () => {
             ) : partnerDetails ? (
               <div className="space-y-2">
                 <p>
-                  <strong>Name:</strong> { partnerDetails.PartnerName || booking.partnerName || "N/A"}
+                  <strong>Name:</strong>{" "}
+                  {partnerDetails.PartnerName || booking.partnerName || "N/A"}
                 </p>
                 <p>
                   <strong>Company:</strong>{" "}
@@ -189,15 +216,21 @@ const BookCard = () => {
                 </p>
                 <p>
                   <strong>Personal Phone:</strong>{" "}
-                  { partnerDetails.personalNumber || booking.partnerMobile ||   "N/A"}
+                  {partnerDetails.personalNumber ||
+                    booking.partnerMobile ||
+                    "N/A"}
                 </p>
                 <p>
                   <strong>Company Phone:</strong>{" "}
-                  {booking.plannerDetails?.companyPhone || partnerDetails.companyNumber || "N/A"}
+                  {booking.plannerDetails?.companyPhone ||
+                    partnerDetails.companyNumber ||
+                    "N/A"}
                 </p>
                 <p>
                   <strong>Company Email:</strong>{" "}
-                  {partnerDetails.companyEmail || partnerDetails.companyEmailId || "N/A"}
+                  {partnerDetails.companyEmail ||
+                    partnerDetails.companyEmailId ||
+                    "N/A"}
                 </p>
                 <p>
                   <strong>GST No:</strong> {partnerDetails.gstNo || "N/A"}
@@ -215,7 +248,6 @@ const BookCard = () => {
           </div>
         </div>
 
-        {/* Status - Bottom Centered */}
         <div className="border-t pt-4 text-center">
           <h3 className="text-xl font-semibold mb-3">Booking Status</h3>
           <select
@@ -232,7 +264,6 @@ const BookCard = () => {
         </div>
       </div>
 
-      {/* Edit Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
