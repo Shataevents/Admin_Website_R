@@ -12,7 +12,7 @@ function Navbar() {
   const pageMap = {
     '/booking-details': 'Booking Details',
     '/partner-details': 'Partner Details',
-    '/request': 'Request',
+    '/partner': 'Request',
     '/user-count': 'User Count',
   };
 

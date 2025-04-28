@@ -27,14 +27,14 @@ function Dashboard() {
                 {/* Second Card */}
                 <div
                     className="w-full h-[15rem] flex flex-col items-start justify-start p-2 rounded-lg border border-gray-300 hover:shadow-lg transition-all duration-300 cursor-pointer"
-                    onClick={() => navigate('/request')}
+                    onClick={() => navigate('/partner')}
                 >
                     <div className="p-6">
                         <h2 className="max-w-80 text-left text-balance text-base md:text-xl lg:text-3xl font-semibold tracking-[-0.015em] ">
-                            Request Details
+                            Partner Details
                         </h2>
                         <p className="mt-4 max-w-[26rem] text-left text-base/6 ">
-                            Here you can see the list of requests from the Event Planners and the details of the requests.
+                            Here you can see the list of partner who as approved by shata admin and you can see asigned booking too.
                         </p>
                     </div>
                 </div>
