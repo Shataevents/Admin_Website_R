@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
+import LoadingScreen from "../components/LoadingScreen"; // Import the LoadingScreen component
 
 const verificationSteps = [
   { title: "Online KYC", description: "See the Video file and uploaded documents", path: "online-kyc", statusKey: "kycStatus", validStatuses: ["AKYC", "RKYC", "DKYC"] },
@@ -65,7 +66,7 @@ const Kyc = () => {
   };
 
   if (isLoading) {
-    return <div className="p-6 text-center text-gray-600 text-xl">Loading planner details...</div>;
+    return <LoadingScreen />; // Show the LoadingScreen while the page is loading
   }
 
   if (error || !planner || !planner.name) {

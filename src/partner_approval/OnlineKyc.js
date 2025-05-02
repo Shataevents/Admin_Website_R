@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
+import LoadingScreen from "../components/LoadingScreen"; // Import the LoadingScreen component
 
 const OnlineKyc = () => {
   const { id } = useParams();
@@ -142,7 +143,7 @@ const OnlineKyc = () => {
   };
 
   if (isLoading) {
-    return <div className="p-6 text-center text-gray-600 text-xl">Loading planner details...</div>;
+    return <LoadingScreen />; // Show the LoadingScreen while the page is loading
   }
 
   if (error || !planner || !planner.name) {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import LoadingScreen from '../components/LoadingScreen'; // Import the LoadingScreen component
 
 function BookingDetails() {
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ function BookingDetails() {
   const [serviceFilter, setServiceFilter] = useState('all');
   const [partnerFilter, setPartnerFilter] = useState('all'); // Renamed from plannerFilter
   const [sortOrder, setSortOrder] = useState('newest');
+  const [loading, setLoading] = useState(true); // Add loading state
 
   // Function to map eventType to service category
   const getServiceCategory = (eventType) => {
@@ -42,6 +44,7 @@ function BookingDetails() {
 
   // Fetch booking details
   useEffect(() => {
+    setLoading(true); // Set loading to true before fetching data
     fetch("https://shatabackend.in/bookings")
       .then((response) => {
         if (!response.ok) {
@@ -64,7 +67,8 @@ function BookingDetails() {
       .catch((error) => {
         console.error("Error fetching booking details:", error);
         setBookings([]);
-      });
+      })
+      .finally(() => setLoading(false)); // Set loading to false after fetching
   }, []);
 
   // Fetch partner names
@@ -187,6 +191,10 @@ function BookingDetails() {
   const handleCardClick = (booking) => {
     navigate('/booking-details/card', { state: booking });
   };
+
+  if (loading) {
+    return <LoadingScreen />; // Show loading screen while data is being fetched
+  }
 
   return (
     <section className="bg-[#fcfcfc] flex items-center justify-center w-full">

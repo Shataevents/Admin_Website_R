@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase'; 
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
+import LoadingScreen from './LoadingScreen'; // Import the LoadingScreen component
 
 function Login({ setLogin }) {
   const [email, setEmail] = useState('');
@@ -28,7 +29,6 @@ function Login({ setLogin }) {
       let res = await signInWithEmailAndPassword(auth, email, password);
       setLogin?.(true);
       console.log("res", res.user.accessToken);
-      // Store the token in local storage or context if needed
       localStorage.setItem('token-shata', res.user.accessToken);
 
       navigate('/dashboard');
@@ -53,6 +53,10 @@ function Login({ setLogin }) {
       setError('Error sending password reset email. Please try again.');
     }
   };
+
+  if (loading) {
+    return <LoadingScreen />; // Show the LoadingScreen when loading is true
+  }
 
   return (
     <div className="flex items-center w-full absolute bg-black justify-center h-full">

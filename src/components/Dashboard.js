@@ -1,10 +1,23 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import LoadingScreen from './LoadingScreen';
 
 function Dashboard() {
     const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(true);
 
+    useEffect(() => {
+        // Simulate a loading delay (e.g., fetching data)
+        const timer = setTimeout(() => {
+            setIsLoading(false);
+        }, 2000); // Adjust the delay as needed
 
+        return () => clearTimeout(timer); // Cleanup the timer
+    }, []);
+
+    if (isLoading) {
+        return <LoadingScreen />;
+    }
 
     return (
         <div className="p-6 shadow-md min-h-screen flex flex-col items-center justify-center">

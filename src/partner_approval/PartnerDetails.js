@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import LoadingScreen from "../components/LoadingScreen"; // Import the LoadingScreen component
 
 const statusTabs = {
   pending: ["pending"],
@@ -50,6 +51,10 @@ const PartnerDetails = () => {
     );
   }, [planners, activeTab]);
 
+  if (loading) {
+    return <LoadingScreen />; // Show the LoadingScreen while the data is loading
+  }
+
   return (
     <>
       <Navbar />
@@ -68,11 +73,7 @@ const PartnerDetails = () => {
           ))}
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-6">
-          {loading ? (
-            <div className="col-span-1 sm:col-span-2 md:col-span-3 text-center text-gray-600 text-xl">
-              Loading...
-            </div>
-          ) : filteredPlanners.length > 0 ? (
+          {filteredPlanners.length > 0 ? (
             filteredPlanners.map((planner, index) => (
               <div
                 key={index}

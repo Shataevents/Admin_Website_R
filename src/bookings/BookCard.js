@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FaEdit } from "react-icons/fa";
+import LoadingScreen from "../components/LoadingScreen"; // Import the LoadingScreen component
 
 const BookCard = () => {
   const location = useLocation();
@@ -66,10 +67,9 @@ const BookCard = () => {
         setError("Failed to fetch client details.");
       });
 
-    Promise.all([fetchPartnerDetails, fetchClientDetails])
-      .finally(() => {
-        setLoading(false);
-      });
+    Promise.all([fetchPartnerDetails, fetchClientDetails]).finally(() => {
+      setLoading(false);
+    });
   }, [booking, reload]);
 
   const handleEditClick = () => {
@@ -129,6 +129,10 @@ const BookCard = () => {
       });
   };
 
+  if (loading) {
+    return <LoadingScreen />;
+  }
+
   return (
     <div className="min-h-screen bg-white py-6 px-4">
       <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6">
@@ -157,9 +161,7 @@ const BookCard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div>
             <h3 className="text-xl font-semibold mb-3">Client Details</h3>
-            {loading ? (
-              <p>Loading client details...</p>
-            ) : error ? (
+            {error ? (
               <p className="text-red-500">{error}</p>
             ) : clientDetails && clientDetails.data ? (
               <div className="space-y-2">
@@ -196,9 +198,7 @@ const BookCard = () => {
             <h3 className="text-xl font-semibold mb-3">
               Event Planner Details
             </h3>
-            {loading ? (
-              <p>Loading partner details...</p>
-            ) : error ? (
+            {error ? (
               <p className="text-red-500">{error}</p>
             ) : partnerDetails ? (
               <div className="space-y-2">

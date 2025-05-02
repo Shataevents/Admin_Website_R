@@ -12,7 +12,7 @@ function Navbar() {
   const pageMap = {
     '/booking-details': 'Booking Details',
     '/partner-details': 'Partner Details',
-    '/partner': 'Request',
+    '/partner': 'Partners',
     '/user-count': 'User Count',
   };
 
@@ -87,7 +87,7 @@ function Navbar() {
         <div className="relative text-2xl">
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="flex items-center space-x-2 bg-white px-4 py-2 rounded focus:outline-none"
+            className="flex items-center space-x-2 bg-[#FCFCFC] px-4 py-2 rounded focus:outline-none"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
               xmlns="http://www.w3.org/2000/svg">
@@ -97,16 +97,17 @@ function Navbar() {
             {/* Hide "Account" text in Mobile */}
             <span className="hidden md:inline">Account</span>
             {/* Down Arrow */}
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
+            <img
+              src="/icons/chevron-down.svg" // Use the chevron-down.svg icon
+              alt="Down Arrow"
+              className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} // Add rotation effect
+            />
           </button>
 
           {isOpen && (
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 text-black">
-              <a href="/dashboard" className="block px-4 py-2 hover:bg-gray-100">Dashboard</a>
-              <div onClick={handleLogout} className="block px-4 py-2 hover:bg-gray-100 cursor-pointer">Logout</div>
+              <a href="/dashboard" className="block px-4 py-2 hover:bg-orange-200">Dashboard</a>
+              <div onClick={handleLogout} className="block px-4 py-2 hover:bg-orange-200 cursor-pointer">Logout</div>
             </div>
           )}
         </div>

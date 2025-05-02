@@ -14,6 +14,7 @@ import Inperson from './partner_approval/Inperson';
 import UserCount from './UserCount/UserCount';
 import ProtectedRoute from './components/ProtectedRoutes';
 import PartnerInfo from './partner/PartnerInfo';
+import PartnerBookings from './partner/PartnerBookings'; // Updated import
 
 function App() {
   return (
@@ -27,7 +28,8 @@ function App() {
             <Route path="/dashboard" element={<ProtectedRoute element={<Dashboard />} />} />
             <Route path="/booking-details" element={<ProtectedRoute element={<BookingDetails />} />} />
             <Route path="/partner-details" element={<ProtectedRoute element={<PartnerDetails />} />} />
-            <Route path="/partner" element={<ProtectedRoute element={<PartnerInfo/>} />} />
+            <Route path="/partner" element={<ProtectedRoute element={<PartnerInfo />} />} />
+            <Route path="/partner/:id" element={<ProtectedRoute element={<PartnerBookings />} />} /> {/* Updated route */}
             <Route path="/partner-details/kyc/:id" element={<ProtectedRoute element={<Kyc />} />} />
             <Route path="/partner-details/kyc/online-kyc/:id" element={<ProtectedRoute element={<OnlineKyc />} />} />
             <Route path="/partner-details/kyc/company-kyc/:id" element={<ProtectedRoute element={<CompanyVerification />} />} />
