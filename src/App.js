@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Dashboard from './components/Dashboard';
 import BookingDetails from './bookings/BookingDetails';
@@ -14,9 +14,38 @@ import Inperson from './partner_approval/Inperson';
 import UserCount from './UserCount/UserCount';
 import ProtectedRoute from './components/ProtectedRoutes';
 import PartnerInfo from './partner/PartnerInfo';
-import PartnerBookings from './partner/PartnerBookings'; // Updated import
+import PartnerBookings from './partner/PartnerBookings';
 
 function App() {
+  useEffect(() => {
+    let logoutTimer;
+
+    const resetTimer = () => {
+      clearTimeout(logoutTimer);
+      logoutTimer = setTimeout(() => {
+        // Clear user session and redirect to login
+        localStorage.removeItem('authToken'); // Adjust based on your auth implementation
+        window.location.href = '/login';
+      }, 2 * 60 * 1000); // 2 minutes
+    };
+
+    // Add event listeners for user activity
+    window.addEventListener('mousemove', resetTimer);
+    window.addEventListener('keydown', resetTimer);
+    window.addEventListener('scroll', resetTimer);
+
+    // Start the timer initially
+    resetTimer();
+
+    // Cleanup event listeners on component unmount
+    return () => {
+      clearTimeout(logoutTimer);
+      window.removeEventListener('mousemove', resetTimer);
+      window.removeEventListener('keydown', resetTimer);
+      window.removeEventListener('scroll', resetTimer);
+    };
+  }, []);
+
   return (
     <Router>
       <div className="flex flex-col h-screen">
@@ -29,7 +58,7 @@ function App() {
             <Route path="/booking-details" element={<ProtectedRoute element={<BookingDetails />} />} />
             <Route path="/partner-details" element={<ProtectedRoute element={<PartnerDetails />} />} />
             <Route path="/partner" element={<ProtectedRoute element={<PartnerInfo />} />} />
-            <Route path="/partner/:id" element={<ProtectedRoute element={<PartnerBookings />} />} /> {/* Updated route */}
+            <Route path="/partner/:id" element={<ProtectedRoute element={<PartnerBookings />} />} />
             <Route path="/partner-details/kyc/:id" element={<ProtectedRoute element={<Kyc />} />} />
             <Route path="/partner-details/kyc/online-kyc/:id" element={<ProtectedRoute element={<OnlineKyc />} />} />
             <Route path="/partner-details/kyc/company-kyc/:id" element={<ProtectedRoute element={<CompanyVerification />} />} />

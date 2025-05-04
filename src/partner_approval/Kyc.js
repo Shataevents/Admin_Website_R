@@ -47,6 +47,22 @@ const Kyc = () => {
       });
   }, [id]);
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Enter" && showSuperAdminPopup) {
+        handleSuperAdminSubmit();
+      }
+    };
+
+    // Add event listener for keydown
+    window.addEventListener("keydown", handleKeyDown);
+
+    // Cleanup event listener on component unmount
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [showSuperAdminPopup, superAdminPassword]);
+
   const handleSuperAdminSubmit = () => {
     if (superAdminPassword === SUPER_ADMIN_PASSWORD) {
       setIsSuperAdmin(true);
