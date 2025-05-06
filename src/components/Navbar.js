@@ -12,7 +12,7 @@ function Navbar() {
   const pageMap = {
     '/booking-details': 'Booking Details',
     '/partner-details': 'Partner Details',
-    '/partner': 'Partners',
+    '/partner': 'Approved Partners',
     '/user-count': 'User Count',
   };
 
@@ -56,13 +56,19 @@ function Navbar() {
           </button>
 
           {isPagesOpen && (
-            <div className="absolute left-0 mt-2 w-48 bg-white text-xl rounded-md shadow-lg py-1 text-black">
+            <div 
+              className="absolute left-0 mt-2 w-50 bg-white text-xl rounded-md shadow-lg py-1 text-black z-50" // Added z-50
+            >
               {Object.keys(pageMap).map((path) => (
-                <a key={path} href={path} className="block px-4 py-2 hover:bg-orange-400"
+                <a 
+                  key={path} 
+                  href={path} 
+                  className="block px-4 py-2 hover:bg-orange-400"
                   onClick={() => {
                     setSelectedPage(pageMap[path]);
                     setIsPagesOpen(false);
-                  }}>
+                  }}
+                >
                   {pageMap[path]}
                 </a>
               ))}
