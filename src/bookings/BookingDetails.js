@@ -12,6 +12,10 @@ function BookingDetails() {
   const [partnerFilter, setPartnerFilter] = useState('all'); // Renamed from plannerFilter
   const [sortOrder, setSortOrder] = useState('newest');
   const [loading, setLoading] = useState(true); // Add loading state
+  const [activeTab, setActiveTab] = useState('Booked'); // Default active tab
+  const [fromDate, setFromDate] = useState(''); // New state for fromDate
+  const [toDate, setToDate] = useState(''); // New state for toDate
+  const [categoryFilter, setCategoryFilter] = useState('all'); // New state for categoryFilter
 
   // Function to map eventType to service category
   const getServiceCategory = (eventType) => {
@@ -41,6 +45,42 @@ function BookingDetails() {
     if (photographyTypes.includes(eventType)) return "Photography";
     return "Events";
   };
+
+  // Function to filter bookings based on the active tab
+  const getFilteredBookingsByTab = () => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    switch (activeTab) {
+      case 'Booked':
+        return bookings.filter(booking =>
+          ['pending', 'partnerVisited', 'userConfirmVisit', 'visited', 'cancelVisit'].includes(booking.status)
+        );
+      case 'Inprogress':
+        return bookings.filter(
+          booking =>
+            booking.status === 'confirmEvent' &&
+            new Date(booking.dateFrom) <= today &&
+            new Date(booking.dateTo) >= today
+        );
+      case 'Completed':
+        return bookings.filter(booking => booking.status === 'completed');
+      case 'Upcoming':
+        return bookings.filter(
+          booking =>
+            booking.status === 'confirmEvent' &&
+            new Date(booking.dateFrom) > today
+        );
+      case 'Cancelled':
+        return bookings.filter(booking =>
+          ['Cancel', 'cancel'].includes(booking.status)
+        );
+      default:
+        return bookings;
+    }
+  };
+
+  const filteredBookingsByTab = getFilteredBookingsByTab();
 
   // Fetch booking details
   useEffect(() => {
@@ -102,92 +142,6 @@ function BookingDetails() {
     ? partners 
     : [...new Set(bookings?.map(booking => booking.partnerName).filter(partner => partner && typeof partner === 'string'))];
 
-  // Filter and sort bookings
-  const filteredBookings = bookings
-    .filter(booking => {
-      // Date filter
-      if (!booking.dateFrom) {
-        console.warn(`Booking missing dateFrom:`, booking);
-        return false;
-      }
-
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      let bookingDate;
-      try {
-        bookingDate = new Date(booking.dateFrom);
-        if (isNaN(bookingDate.getTime())) {
-          console.warn(`Invalid dateFrom in booking:`, booking.dateFrom);
-          return false;
-        }
-        bookingDate.setHours(0, 0, 0, 0);
-      } catch (error) {
-        console.warn(`Error parsing dateFrom in booking:`, booking.dateFrom, error);
-        return false;
-      }
-
-      const dateMatches = 
-        dateFilter === 'all' ||
-        (dateFilter === 'thisWeek' && bookingDate >= today && bookingDate <= new Date(today.getFullYear(), today.getMonth(), today.getDate() + 6, 23, 59, 59, 999)) ||
-        (dateFilter === 'nextWeek' && bookingDate >= new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7, 0, 0, 0, 0) && bookingDate <= new Date(today.getFullYear(), today.getMonth(), today.getDate() + 13, 23, 59, 59, 999)) ||
-        (dateFilter === 'thisMonth' && bookingDate >= today && bookingDate <= new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59, 999)) ||
-        (dateFilter === 'nextMonth' && bookingDate >= new Date(today.getFullYear(), today.getMonth() + 1, 1, 0, 0, 0, 0) && bookingDate <= new Date(today.getFullYear(), today.getMonth() + 2, 0, 23, 59, 59, 999));
-      if (!dateMatches) {
-        console.log(`Booking excluded by date filter: ${booking.dateFrom}, filter=${dateFilter}`);
-      }
-      return dateMatches;
-    })
-    .filter(booking => {
-      // Service filter
-      const serviceMatches = serviceFilter === 'all' || booking.derivedService === serviceFilter;
-      if (!serviceMatches) {
-        console.log(`Booking excluded by service filter: ${booking.derivedService}, filter=${serviceFilter}`);
-      }
-      return serviceMatches;
-    })
-    .filter(booking => {
-      // Partner filter (using partnerName instead of planner)
-      if (!booking.partnerName || typeof booking.partnerName !== 'string') {
-        console.warn(`Booking missing or invalid partnerName field:`, booking);
-        return partnerFilter === 'all';
-      }
-      const partnerValue = booking.partnerName.trim();
-      const filterValue = partnerFilter.trim();
-      console.log(`Comparing partner: booking.partnerName="${partnerValue}", partnerFilter="${filterValue}", lowercased="${partnerValue.toLowerCase()}" vs "${filterValue.toLowerCase()}"`);
-      const matches = partnerFilter === 'all' || partnerValue.toLowerCase() === filterValue.toLowerCase();
-      if (!matches) {
-        console.log(`Booking excluded by partner filter: booking.partnerName="${partnerValue}", partnerFilter="${filterValue}", comparison failed`);
-      } else {
-        console.log(`Booking included by partner filter: booking.partnerName="${partnerValue}", partnerFilter="${filterValue}"`);
-      }
-      return matches;
-    })
-    .sort((a, b) => {
-      // Sort by derivedService (Catering > Photography > Events)
-      const serviceOrder = { Catering: 1, Photography: 2, Events: 3 };
-      const serviceA = serviceOrder[a.derivedService] || 4;
-      const serviceB = serviceOrder[b.derivedService] || 4;
-      
-      if (serviceA !== serviceB) {
-        return serviceA - serviceB;
-      }
-
-      // Within same service, sort by dateFrom
-      const dateA = new Date(a.dateFrom);
-      const dateB = new Date(b.dateFrom);
-      if (isNaN(dateA.getTime()) || isNaN(dateB.getTime())) {
-        console.warn(`Invalid dates in sort: dateA=${a.dateFrom}, dateB=${b.dateFrom}`);
-        return 0;
-      }
-      return sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
-    });
-
-  // Log filtered bookings
-  useEffect(() => {
-    console.log(`Filtered and sorted bookings (dateFilter=${dateFilter}, serviceFilter=${serviceFilter}, partnerFilter=${partnerFilter}, sortOrder=${sortOrder}, count=${filteredBookings.length}):`, filteredBookings);
-  }, [filteredBookings, dateFilter, serviceFilter, partnerFilter, sortOrder]);
-
   const handleCardClick = (booking) => {
     navigate('/booking-details/card', { state: booking });
   };
@@ -201,6 +155,21 @@ function BookingDetails() {
       <div className="w-full">
         <Navbar />
         <h2 className="text-2xl font-bold my-6 text-center">Booking Details</h2>
+
+        {/* Tabs Section */}
+        <div className="flex justify-center space-x-4 mb-6">
+          {['Booked', 'Inprogress', 'Completed', 'Upcoming', 'Cancelled'].map(tab => (
+            <button
+              key={tab}
+              className={`px-4  rounded-full ${
+                activeTab === tab ? 'bg-orange-500 text-black' : 'bg-white text-orange-500'
+              }`}
+              onClick={() => setActiveTab(tab)}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
 
         {/* Filter and Sort Section */}
         <div className="bg-white mx-1 p-6 rounded-lg shadow-md mb-6">
@@ -221,6 +190,25 @@ function BookingDetails() {
               </select>
             </div>
 
+            {/* New Booked Date Filter */}
+            <div>
+              <label className="block text-sm font-medium mb-2">Booked Date</label>
+              <input
+                type="date"
+                value={fromDate}
+                onChange={(e) => setFromDate(e.target.value)}
+                className="w-full p-2 border rounded mb-2"
+                placeholder="From Date"
+              />
+              <input
+                type="date"
+                value={toDate}
+                onChange={(e) => setToDate(e.target.value)}
+                className="w-full p-2 border rounded"
+                placeholder="To Date"
+              />
+            </div>
+
             {/* Service Filter */}
             <div>
               <label className="block text-sm font-medium mb-2">Filter by Service</label>
@@ -230,6 +218,21 @@ function BookingDetails() {
                 className="w-full p-2 border rounded"
               >
                 <option value="all">All Services</option>
+                <option value="Catering">Catering</option>
+                <option value="Photography">Photography</option>
+                <option value="Events">Events</option>
+              </select>
+            </div>
+
+            {/* New Categories Filter */}
+            <div>
+              <label className="block text-sm font-medium mb-2">Filter by Categories</label>
+              <select
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
+                className="w-full p-2 border rounded"
+              >
+                <option value="all">All Categories</option>
                 <option value="Catering">Catering</option>
                 <option value="Photography">Photography</option>
                 <option value="Events">Events</option>
@@ -268,8 +271,8 @@ function BookingDetails() {
 
         {/* Booking Cards Section */}
         <div className="grid px-3 grid-cols-1 md:grid-cols-3 gap-6 w-full">
-          {filteredBookings.length > 0 ? (
-            filteredBookings.map((booking, index) => (
+          {filteredBookingsByTab.length > 0 ? (
+            filteredBookingsByTab.map((booking, index) => (
               <div 
                 key={index}
                 className="bg-white p-6 rounded-lg shadow-md flex flex-col gap-4 cursor-pointer hover:shadow-lg w-full"
@@ -332,7 +335,7 @@ function BookingDetails() {
             ))
           ) : (
             <div className="col-span-1 md:col-span-3 text-center text-gray-600">
-              No bookings match the selected filters.
+              No bookings match the selected tab.
             </div>
           )}
         </div>
