@@ -15,6 +15,8 @@ function BookingDetails() {
   const [activeTab, setActiveTab] = useState('Booked');
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
+  const [searchNumberId, setSearchNumberId] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
 
   const getServiceCategory = (eventType) => {
     const cateringTypes = ["Shushi Counter", "BBQ Grill Station", "Premium Wedding Catering", "Desert Counter", "Live Pasta Station"];
@@ -46,6 +48,19 @@ function BookingDetails() {
   };
 
   const getFinalFilteredBookings = () => {
+    // If searching by numberId, use search results instead
+    if (searchNumberId && searchResults.length > 0) {
+      return searchResults.map(b => ({
+        ...b,
+        derivedService: getServiceCategory(b.eventType)
+      }));
+    }
+    
+    // If searching by numberId but no results, return empty array
+    if (searchNumberId && searchResults.length === 0) {
+      return [];
+    }
+    
     let result = [...getFilteredBookingsByTab()];
     const now = new Date();
 
@@ -140,6 +155,45 @@ function BookingDetails() {
       });
   }, []);
 
+  // Auto-search by numberId with debounce
+  useEffect(() => {
+    if (!searchNumberId) {
+      setSearchResults([]);
+      return;
+    }
+
+    const debounceTimer = setTimeout(() => {
+      fetch(`https://shatabackend.in/bookings?numberId=${searchNumberId}`)
+        .then(res => res.ok ? res.json() : Promise.reject(res.status))
+        .then(data => {
+          // Filter the results to only include exact numberId matches
+          const filteredResults = Array.isArray(data) 
+            ? data.filter(booking => booking.numberId === searchNumberId)
+            : [];
+          setSearchResults(filteredResults);
+        })
+        .catch(err => {
+          console.error("Error searching bookings by numberId:", err);
+          setSearchResults([]);
+        });
+    }, 500); // 500ms delay after user stops typing
+
+    return () => clearTimeout(debounceTimer);
+  }, [searchNumberId]);
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    // Clear all filters when switching tabs
+    setDateFilter('all');
+    setServiceFilter('all');
+    setPartnerFilter('all');
+    setSortOrder('newest');
+    setFromDate('');
+    setToDate('');
+    setSearchNumberId('');
+    setSearchResults([]);
+  };
+
   const uniquePartners = partners.length > 0
     ? partners
     : [...new Set(bookings.map(b => b.partnerName).filter(p => typeof p === 'string'))];
@@ -159,21 +213,40 @@ function BookingDetails() {
         <h2 className="text-2xl font-bold my-6 text-center">Booking Details</h2>
 
         {/* Tabs */}
-        <div className="flex justify-center space-x-4 mb-6">
-          {['Booked', 'Inprogress', 'Completed', 'Upcoming', 'Cancelled'].map(tab => (
-            <button
-              key={tab}
-              className={`px-4 rounded-full ${activeTab === tab ? 'bg-orange-500 text-black' : 'bg-white text-orange-500'}`}
-              onClick={() => setActiveTab(tab)}
-            >
-              {tab}
-            </button>
-          ))}
+        <div className="flex justify-center mb-6 px-2">
+          <div className="flex flex-wrap justify-center gap-2 sm:gap-4 max-w-full">
+            {['Booked', 'Inprogress', 'Completed', 'Upcoming', 'Cancelled'].map(tab => (
+              <button
+                key={tab}
+                className={`px-3  sm:px-4 rounded-full text-sm sm:text-base whitespace-nowrap transition-colors ${
+                  activeTab === tab ? 'bg-orange-500 text-black' : 'bg-white text-orange-500 border border-orange-500'
+                }`}
+                onClick={() => handleTabChange(tab)}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Filters */}
         <div className="bg-white mx-1 p-6 rounded-lg shadow-md mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 w-full">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 w-full">
+            <div>
+              <label className="block text-sm font-medium mb-2">Search by Number ID</label>
+              <input
+                type="text"
+                value={searchNumberId}
+                onChange={e => setSearchNumberId(e.target.value)}
+                placeholder="Enter number ID..."
+                className="w-full p-2 border rounded"
+              />
+              {searchNumberId && (
+                <small className="text-gray-500 text-xs mt-1 block">
+                  {searchResults.length > 0 ? `Found ${searchResults.length} result(s)` : 'Searching...'}
+                </small>
+              )}
+            </div>
             <div>
               <label className="block text-sm font-medium mb-2">Filter by Date</label>
               <select value={dateFilter} onChange={e => setDateFilter(e.target.value)} className="w-full p-2 border rounded">

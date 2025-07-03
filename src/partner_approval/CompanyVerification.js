@@ -190,19 +190,7 @@ const CompanyVerification = () => {
             <p className="text-gray-600 mt-2">Incorporation Certificate not uploaded.</p>
           )}
         </div>
-        <div>
-          <h4 className="text-xl font-bold">LIN Certificate</h4>
-          {planner.LINCertificateUrl ? (
-            <img
-              src={planner.LINCertificateUrl}
-              alt="LIN Certificate"
-              className="w-50 h-40 rounded-md border-2 border-gray-500 mt-2 cursor-pointer"
-              onClick={() => setPreviewImage(planner.LINCertificateUrl)}
-            />
-          ) : (
-            <p className="text-gray-600 mt-2">LIN Certificate not uploaded.</p>
-          )}
-        </div>
+        
       </div>
 
       <div className="bg-white p-6 rounded-lg shadow-md mt-6 flex justify-center gap-6">
