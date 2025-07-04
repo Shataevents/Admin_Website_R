@@ -118,7 +118,7 @@ const Kyc = () => {
         <p className="text-xl"><strong>Name:</strong> {planner.name || "Not Available"}</p>
         <p className="text-xl"><strong>Company:</strong> {planner.companyName || "Not Available"}</p>
         <p className="text-xl"><strong>Company Location:</strong> {planner.companyLocation || "Not Available"}</p>
-        <p className="text-xl"><strong>Personal Phone:</strong> {planner.mobileNo || "Not Available"}</p>
+        <p className="text-xl"><strong>Partner Phone:</strong> {planner.mobileNo || "Not Available"}</p>
         <p className="text-xl"><strong>Selected Services:</strong> {
           planner.servicesSelected && Array.isArray(planner.servicesSelected) && planner.servicesSelected.length > 0
             ? planner.servicesSelected.join(", ")

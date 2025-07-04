@@ -109,12 +109,16 @@ const Inperson = () => {
       </button>
 
       <div className="bg-white border-2 border-white p-6 rounded-lg shadow-md mb-6">
-        <h3 className="text-3xl font-semibold mb-4">Planner Details</h3>
+        <h3 className="text-3xl font-semibold mb-4">Partner Details</h3>
         <p className="text-xl"><strong>Name:</strong> {planner.name}</p>
         <p className="text-xl"><strong>Company:</strong> {planner.companyName}</p>
-        <p className="text-xl"><strong>Planner Phone:</strong> {planner.mobileNo}</p>
-        <p className="text-xl"><strong>Company Email:</strong> {planner.companyEmail}</p>
+        <p className="text-xl"><strong>Partner Phone:</strong> {planner.mobileNo}</p>
         <p className="text-xl"><strong>Company Location:</strong> {planner.companyLocation}</p>
+        <p className="text-xl"><strong>Selected Services:</strong> {
+          planner.servicesSelected && Array.isArray(planner.servicesSelected) && planner.servicesSelected.length > 0
+            ? planner.servicesSelected.join(", ")
+            : "Not Available"
+        }</p>
       </div>
 
       <div className="bg-white p-6 rounded-lg shadow-md mt-6 flex justify-center gap-6">

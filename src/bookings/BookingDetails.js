@@ -79,7 +79,6 @@ function BookingDetails() {
 
     // Date range filter
     if (fromDate) result = result.filter(b => new Date(b.dateFrom) >= new Date(fromDate));
-    if (toDate) result = result.filter(b => new Date(b.dateFrom) <= new Date(toDate));
 
     // Preset date filter
     switch (dateFilter) {
@@ -207,7 +206,6 @@ function BookingDetails() {
     setPartnerFilter('all');
     setSortOrder('newest');
     setFromDate('');
-    setToDate('');
     setSearchNumberId('');
     setSearchResults([]);
   };
@@ -337,8 +335,7 @@ function BookingDetails() {
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">Booked Date</label>
-              <input type="date" value={fromDate} onChange={e => setFromDate(e.target.value)} className="w-full p-2 border rounded mb-2" />
-              <input type="date" value={toDate} onChange={e => setToDate(e.target.value)} className="w-full p-2 border rounded" />
+              <input type="date" value={fromDate} onChange={e => setFromDate(e.target.value)} className="w-full p-2 border rounded" />
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">Filter by Service</label>

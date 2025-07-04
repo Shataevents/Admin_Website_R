@@ -160,7 +160,7 @@ const OnlineKyc = () => {
         <FaArrowLeft className="mr-2" /> Back
       </button>
 
-      <div className="text-left text-3xl font-bold my-2">Planner: {planner.name}</div>
+      <div className="text-left text-3xl font-bold my-2">Partner: {planner.name}</div>
       <h2 className="text-2xl font-bold">Online KYC Verification</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
