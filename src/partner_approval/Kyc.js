@@ -133,7 +133,7 @@ const Kyc = () => {
             className={`bg-white border-white p-4 rounded-lg shadow-lg border-2 transition-all ${
               isStepAccessible(index) ? "cursor-pointer hover:bg-orange-100" : "opacity-50 cursor-not-allowed"
             }`}
-            onClick={() => isStepAccessible(index) && navigate(`/partner-details/kyc/${step.path}/${id}?superAdmin=${isSuperAdmin}`)}
+            onClick={() => isStepAccessible(index) && navigate(`/approval-panel/kyc/${step.path}/${id}?superAdmin=${isSuperAdmin}`)}
           >
             <h3 className="font-bold text-2xl">{step.title}</h3>
             <p className="text-black/80 text-lg">{step.description}</p>

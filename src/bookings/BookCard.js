@@ -34,6 +34,28 @@ const BookCard = () => {
     return partner?.personalNumber || partner?.phone || partner?.mobile || partner?.mobileNo || partner?.phoneNumber || 'No Phone';
   };
 
+  // Helper function to determine services based on booking criteria
+  const getBookingServices = (booking) => {
+    const services = [];
+    
+    // Check if photographyEvent matches eventId
+    if (booking?.photographyEvent && booking?.eventId && booking.photographyEvent === booking.eventId) {
+      services.push("Photography");
+    }
+    
+    // Check if cateringEvent matches eventId
+    if (booking?.cateringEvent && booking?.eventId && booking.cateringEvent === booking.eventId) {
+      services.push("Catering");
+    }
+    
+    // If neither photography nor catering matches, then it's an Event service
+    if (services.length === 0) {
+      services.push("Event");
+    }
+    
+    return services;
+  };
+
   const statusOptions = [
     "to visit",
     "in progress",
@@ -310,7 +332,7 @@ const BookCard = () => {
                 </p>
                 <p>
                   <strong>Services Booked:</strong>{" "}
-                  {booking.services?.join(", ") || "N/A"}
+                  {getBookingServices(booking).join(", ") || "N/A"}
                 </p>
               </div>
             ) : (

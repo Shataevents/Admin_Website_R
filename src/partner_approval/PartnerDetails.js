@@ -78,7 +78,7 @@ const PartnerDetails = () => {
               <div
                 key={index}
                 className="p-4 rounded-lg shadow-lg shadow-black/25 bg-white border-2 border-white cursor-pointer hover:bg-gray-100 transition-all"
-                onClick={() => navigate(`/partner-details/kyc/${planner._id}`)} // Navigate on card click
+                onClick={() => navigate(`/approval-panel/kyc/${planner._id}`)} // Navigate on card click
               >
                 <h3 className="font-bold text-lg">{planner.name || "Not Available"}</h3>
                 <p className="text-black/70 text-sm">{planner.companyName || "Not Available"}</p>
@@ -90,7 +90,7 @@ const PartnerDetails = () => {
                   className="px-3 py-1 bg-orange-400 text-black text-sm rounded-md mt-2"
                   onClick={(e) => {
                     e.stopPropagation(); // Prevent triggering the card's onClick
-                    navigate(`/partner-details/kyc/${planner._id}`);
+                    navigate(`/approval-panel/kyc/${planner._id}`);
                   }}
                 >
                   Check Details

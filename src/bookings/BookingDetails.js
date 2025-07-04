@@ -18,14 +18,25 @@ function BookingDetails() {
   const [searchNumberId, setSearchNumberId] = useState('');
   const [searchResults, setSearchResults] = useState([]);
 
-  const getServiceCategory = (eventType) => {
-    const cateringTypes = ["Shushi Counter", "BBQ Grill Station", "Premium Wedding Catering", "Desert Counter", "Live Pasta Station"];
-    const photographyTypes = ["Maternity", "Post Wedding", "Professional Photography", "Self Photography", "Pre Wedding", "Wedding Photography", "Baby Shower"];
-
-    if (!eventType) return "Events";
-    if (cateringTypes.includes(eventType)) return "Catering";
-    if (photographyTypes.includes(eventType)) return "Photography";
-    return "Events";
+  const getBookingServices = (booking) => {
+    const services = [];
+    
+    // Check if photographyEvent matches eventId
+    if (booking?.photographyEvent && booking?.eventId && booking.photographyEvent === booking.eventId) {
+      services.push("Photography");
+    }
+    
+    // Check if cateringEvent matches eventId
+    if (booking?.cateringEvent && booking?.eventId && booking.cateringEvent === booking.eventId) {
+      services.push("Catering");
+    }
+    
+    // If neither photography nor catering matches, then it's an Event service
+    if (services.length === 0) {
+      services.push("Event");
+    }
+    
+    return services;
   };
 
   const getFilteredBookingsByTab = () => {
@@ -33,13 +44,15 @@ function BookingDetails() {
     today.setHours(0, 0, 0, 0);
     switch (activeTab) {
       case 'Booked':
-        return bookings.filter(b => ['pending', 'partnerVisited', 'userConfirmVisit', 'visited', 'cancelVisit'].includes(b.status));
+        return bookings.filter(b => ['pending', 'partnerVisited', 'userConfirmVisit', 'cancelVisit'].includes(b.status));
+      case 'Partner Visited':
+        return bookings.filter(b => b.status === 'visited');
       case 'Inprogress':
         return bookings.filter(b => b.status === 'confirmEvent' && new Date(b.dateFrom) <= today && new Date(b.dateTo) >= today);
-      case 'Completed':
-        return bookings.filter(b => b.status === 'completed');
       case 'Upcoming':
         return bookings.filter(b => b.status === 'confirmEvent' && new Date(b.dateFrom) > today);
+      case 'Completed':
+        return bookings.filter(b => b.status === 'completed');
       case 'Cancelled':
         return bookings.filter(b => ['Cancel', 'cancel'].includes(b.status));
       default:
@@ -52,7 +65,7 @@ function BookingDetails() {
     if (searchNumberId && searchResults.length > 0) {
       return searchResults.map(b => ({
         ...b,
-        derivedService: getServiceCategory(b.eventType)
+        derivedServices: getBookingServices(b)
       }));
     }
     
@@ -111,7 +124,12 @@ function BookingDetails() {
       default: break;
     }
 
-    if (serviceFilter !== 'all') result = result.filter(b => b.derivedService === serviceFilter);
+    if (serviceFilter !== 'all') {
+      result = result.filter(b => {
+        const services = getBookingServices(b);
+        return services.includes(serviceFilter);
+      });
+    }
     if (partnerFilter !== 'all') result = result.filter(b => b.partnerName === partnerFilter);
 
     result.sort((a, b) => sortOrder === 'newest'
@@ -129,7 +147,7 @@ function BookingDetails() {
       .then(data => {
         const enhanced = data.map(b => ({
           ...b,
-          derivedService: getServiceCategory(b.eventType)
+          derivedServices: getBookingServices(b)
         }));
         setBookings(enhanced);
       })
@@ -202,6 +220,66 @@ function BookingDetails() {
     navigate('/booking-details/card', { state: booking });
   };
 
+  const getStatusDisplay = (status) => {
+    switch (status) {
+      case 'pending':
+        return {
+          text: 'Pending',
+          bgColor: 'bg-yellow-100',
+          textColor: 'text-yellow-800'
+        };
+      case 'partnerVisited':
+        return {
+          text: 'Waiting for the user to confirm the Visit',
+          bgColor: 'bg-blue-100',
+          textColor: 'text-blue-800'
+        };
+      case 'userConfirmVisit':
+        return {
+          text: 'User Confirmed Visit',
+          bgColor: 'bg-green-100',
+          textColor: 'text-green-800'
+        };
+      case 'cancelVisit':
+        return {
+          text: 'Visit is cancel by the User.',
+          bgColor: 'bg-red-100',
+          textColor: 'text-red-800'
+        };
+      case 'visited':
+        return {
+          text: 'Partner is Visited',
+          bgColor: 'bg-purple-100',
+          textColor: 'text-purple-800'
+        };
+      case 'confirmEvent':
+        return {
+          text: 'Event Service is Confirmed.',
+          bgColor: 'bg-green-100',
+          textColor: 'text-green-800'
+        };
+      case 'completed':
+        return {
+          text: 'Event Service is Completed',
+          bgColor: 'bg-emerald-100',
+          textColor: 'text-emerald-800'
+        };
+      case 'cancel':
+      case 'Cancel':
+        return {
+          text: 'Event Service is Cancelled',
+          bgColor: 'bg-red-100',
+          textColor: 'text-red-800'
+        };
+      default:
+        return {
+          text: status || 'Unknown Status',
+          bgColor: 'bg-gray-100',
+          textColor: 'text-gray-800'
+        };
+    }
+  };
+
   if (loading) return <LoadingScreen />;
 
   const filteredBookings = getFinalFilteredBookings();
@@ -215,7 +293,7 @@ function BookingDetails() {
         {/* Tabs */}
         <div className="flex justify-center mb-6 px-2">
           <div className="flex flex-wrap justify-center gap-2 sm:gap-4 max-w-full">
-            {['Booked', 'Inprogress', 'Completed', 'Upcoming', 'Cancelled'].map(tab => (
+            {['Booked', 'Partner Visited', 'Inprogress',  'Upcoming', 'Completed', 'Cancelled'].map(tab => (
               <button
                 key={tab}
                 className={`px-3  sm:px-4 rounded-full text-sm sm:text-base whitespace-nowrap transition-colors ${
@@ -268,7 +346,7 @@ function BookingDetails() {
                 <option value="all">All Services</option>
                 <option value="Catering">Catering</option>
                 <option value="Photography">Photography</option>
-                <option value="Events">Events</option>
+                <option value="Event">Event</option>
               </select>
             </div>
             <div>
@@ -293,31 +371,38 @@ function BookingDetails() {
         {/* Cards */}
         <div className="grid px-3 grid-cols-1 md:grid-cols-3 gap-6 w-full">
           {filteredBookings.length > 0 ? (
-            filteredBookings.map((booking, index) => (
-              <div
-                key={index}
-                className="bg-white p-6 rounded-lg shadow-md flex flex-col gap-4 cursor-pointer hover:shadow-lg"
-                onClick={() => handleCardClick(booking)}
-              >
-                <h3 className="text-xl font-semibold">{booking.eventType || "Not Available"}</h3>
-                <div className="flex items-center gap-2">
-                  <span>{booking?.dateFrom?.split("T")[0] || "No Date"}</span>
+            filteredBookings.map((booking, index) => {
+              const statusInfo = getStatusDisplay(booking.status);
+              return (
+                <div
+                  key={index}
+                  className="bg-white p-6 rounded-lg shadow-md flex flex-col gap-4 cursor-pointer hover:shadow-lg relative"
+                  onClick={() => handleCardClick(booking)}
+                >
+                  <h3 className="text-xl font-semibold">{booking.eventType || "Not Available"}</h3>
+                  <div className="flex items-center gap-2">
+                    <span>{booking?.dateFrom?.split("T")[0] || "No Date"}</span>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <p className="font-medium">Service Category:</p>
+                    <span>{getBookingServices(booking).join(', ')}</span>
+                  </div>
+                  {booking.services?.length > 0 && (
+                    <>
+                      <p className="font-medium mt-2">Additional Services:</p>
+                      {booking.services.map((s, i) => <span key={i}>{s}</span>)}
+                    </>
+                  )}
+                  <div className="flex items-center justify-between">
+                    <span>{booking.partnerName || "Not Available"}</span>
+                    {/* Status Badge - Bottom Right */}
+                    <div className={`px-3 py-1 rounded-full text-xs font-medium ${statusInfo.bgColor} ${statusInfo.textColor}`}>
+                      {statusInfo.text}
+                    </div>
+                  </div>
                 </div>
-                <div className="flex flex-col gap-2">
-                  <p className="font-medium">Service Category:</p>
-                  <span>{booking.derivedService}</span>
-                </div>
-                {booking.services?.length > 0 && (
-                  <>
-                    <p className="font-medium mt-2">Additional Services:</p>
-                    {booking.services.map((s, i) => <span key={i}>{s}</span>)}
-                  </>
-                )}
-                <div className="flex items-center gap-2">
-                  <span>{booking.partnerName || "Not Available"}</span>
-                </div>
-              </div>
-            ))
+              );
+            })
           ) : (
             <div className="col-span-1 md:col-span-3 text-center text-gray-600">
               No bookings match the selected filters.

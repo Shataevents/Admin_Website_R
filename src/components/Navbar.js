@@ -11,8 +11,8 @@ function Navbar() {
 
   const pageMap = {
     '/booking-details': 'Booking Details',
-    '/partner-details': 'Partner Approval Panel',
-    '/partner': 'Partners Details',
+    '/approval-panel': 'Approval Panel',
+    '/partner-details': 'Partners Details',
     '/user-count': 'User Count',
   };
 

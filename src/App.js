@@ -32,13 +32,13 @@ function App() {
               <Route path="/" element={<Login />} />
               <Route path="/dashboard" element={<ProtectedRoute element={<Dashboard />} />} />
               <Route path="/booking-details" element={<ProtectedRoute element={<BookingDetails />} />} />
-              <Route path="/partner-details" element={<ProtectedRoute element={<PartnerDetails />} />} />
-              <Route path="/partner" element={<ProtectedRoute element={<PartnerInfo />} />} />
+              <Route path="/approval-panel" element={<ProtectedRoute element={<PartnerDetails />} />} />
+              <Route path="/partner-details" element={<ProtectedRoute element={<PartnerInfo />} />} />
               <Route path="/partner/:id" element={<ProtectedRoute element={<PartnerBookings />} />} />
-              <Route path="/partner-details/kyc/:id" element={<ProtectedRoute element={<Kyc />} />} />
-              <Route path="/partner-details/kyc/online-kyc/:id" element={<ProtectedRoute element={<OnlineKyc />} />} />
-              <Route path="/partner-details/kyc/company-kyc/:id" element={<ProtectedRoute element={<CompanyVerification />} />} />
-              <Route path="/partner-details/kyc/in-person/:id" element={<ProtectedRoute element={<Inperson />} />} />
+              <Route path="/approval-panel/kyc/:id" element={<ProtectedRoute element={<Kyc />} />} />
+              <Route path="/approval-panel/kyc/online-kyc/:id" element={<ProtectedRoute element={<OnlineKyc />} />} />
+              <Route path="/approval-panel/kyc/company-kyc/:id" element={<ProtectedRoute element={<CompanyVerification />} />} />
+              <Route path="/approval-panel/kyc/in-person/:id" element={<ProtectedRoute element={<Inperson />} />} />
               <Route path="/booking-details/card" element={<ProtectedRoute element={<BookCard />} />} />
               <Route path="/partner/order" element={<ProtectedRoute element={<Order />} />} />
               <Route path="/user-count" element={<ProtectedRoute element={<UserCount />} />} />

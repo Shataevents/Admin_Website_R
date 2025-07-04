@@ -82,7 +82,22 @@ function Dashboard() {
                 {/* Second Card */}
                 <div
                     className="w-full h-[15rem] flex flex-col items-start justify-start p-2 rounded-lg border border-gray-300 hover:shadow-lg transition-all duration-300 cursor-pointer"
-                    onClick={() => navigate('/partner')}
+                    onClick={() => navigate('/approval-panel')}
+                >
+                    <div className="max-w-sm p-6">
+                        <h2 className="max-w-sm md:max-w-lg text-left text-balance text-base md:text-xl lg:text-3xl font-semibold tracking-[-0.015em] ">
+                            Approval Panel
+                        </h2>
+                        <p className="mt-4 max-w-[26rem] text-left text-base/6 ">
+                            Approve and manage the partner registration and access there details.
+                        </p>
+                    </div>
+                </div>
+                
+                {/* Third Card */}
+                <div
+                    className="w-full h-[15rem] flex flex-col items-start justify-start p-2 rounded-lg border border-gray-300 hover:shadow-lg transition-all duration-300 cursor-pointer"
+                    onClick={() => navigate('/partner-details')}
                 >
                     <div className="p-6">
                         <h2 className="max-w-80 text-left text-balance text-base md:text-xl lg:text-3xl font-semibold tracking-[-0.015em] ">
@@ -94,20 +109,6 @@ function Dashboard() {
                     </div>
                 </div>
 
-                {/* Third Card */}
-                <div
-                    className="w-full h-[15rem] flex flex-col items-start justify-start p-2 rounded-lg border border-gray-300 hover:shadow-lg transition-all duration-300 cursor-pointer"
-                    onClick={() => navigate('/partner-details')}
-                >
-                    <div className="max-w-sm p-6">
-                        <h2 className="max-w-sm md:max-w-lg text-left text-balance text-base md:text-xl lg:text-3xl font-semibold tracking-[-0.015em] ">
-                            Partner
-                        </h2>
-                        <p className="mt-4 max-w-[26rem] text-left text-base/6 ">
-                            Approve and manage the partner registration and access there details.
-                        </p>
-                    </div>
-                </div>
 
                 {/* Fourth Card - User Count */}
                 <div className="w-full h-[15rem] flex flex-col items-start justify-start p-2 rounded-lg border border-gray-300 hover:shadow-lg transition-all cursor-pointer duration-300"

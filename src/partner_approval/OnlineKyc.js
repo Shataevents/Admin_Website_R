@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
+import { GrClose } from "react-icons/gr";
 import LoadingScreen from "../components/LoadingScreen"; // Import the LoadingScreen component
 
 const OnlineKyc = () => {
@@ -15,7 +16,6 @@ const OnlineKyc = () => {
   const [showDeclinePopup, setShowDeclinePopup] = useState(false);
   const [declineReason, setDeclineReason] = useState("");
   const [previewImage, setPreviewImage] = useState(null); // State for preview image
-  const [previewVideo, setPreviewVideo] = useState(null); // State for video preview
   const isSuperAdmin = new URLSearchParams(location.search).get("superAdmin") === "true";
 
   useEffect(() => {
@@ -43,6 +43,10 @@ const OnlineKyc = () => {
         setIsLoading(false);
       });
   }, [id]);
+
+  const closePreviewImage = () => {
+    setPreviewImage(null);
+  };
 
   const handleApprove = () => {
     fetch(`https://shatabackend.in/partners/${id}`, {
@@ -164,8 +168,7 @@ const OnlineKyc = () => {
           <h3 className="text-3xl font-semibold mb-2">Video Verification</h3>
           {planner.videoUrl ? (
             <video
-              className="w-full h-64 rounded-md border-2 cursor-pointer"
-              onClick={() => setPreviewVideo(planner.videoUrl)} // Set preview video
+              className="w-full h-64 rounded-md border-2"
               controls
             >
               <source src={planner?.videoUrl} type="video/mp4" />
@@ -322,30 +325,20 @@ const OnlineKyc = () => {
 
       {/* Preview Modal */}
       {previewImage && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <img src={previewImage} alt="Preview" className="max-w-[400px] max-h-screen rounded-md" />
+        <div className="fixed inset-0 bg-white z-50 flex flex-col">
+          {/* Image container */}
+          <div className="flex-1 overflow-auto flex items-center justify-center bg-white relative py-6">
             <button
-              className="mt-4 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
-              onClick={() => setPreviewImage(null)} // Close preview
+              className="absolute top-6 right-6 w-10 h-10 bg-red-500 text-white rounded-full hover:bg-red-600 flex items-center justify-center text-lg font-bold transition-colors z-10"
+              onClick={closePreviewImage}
             >
-              Close
+              <GrClose />
             </button>
-          </div>
-        </div>
-      )}
-
-      {/* Video Preview Modal */}
-      {previewVideo && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <video src={previewVideo} controls className="max-w-2xl max-h-screen rounded-md" />
-            <button
-              className="mt-4 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
-              onClick={() => setPreviewVideo(null)} // Close preview
-            >
-              Close
-            </button>
+            <img 
+              src={previewImage} 
+              alt="Preview" 
+              className="max-w-full max-h-full object-contain shadow-lg"
+            />
           </div>
         </div>
       )}
