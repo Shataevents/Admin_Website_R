@@ -34,7 +34,7 @@ function App() {
               <Route path="/booking-details" element={<ProtectedRoute element={<BookingDetails />} />} />
               <Route path="/approval-panel" element={<ProtectedRoute element={<PartnerDetails />} />} />
               <Route path="/partner-details" element={<ProtectedRoute element={<PartnerInfo />} />} />
-              <Route path="/partner/:id" element={<ProtectedRoute element={<PartnerBookings />} />} />
+              <Route path="/partner-details/:id" element={<ProtectedRoute element={<PartnerBookings />} />} />
               <Route path="/approval-panel/kyc/:id" element={<ProtectedRoute element={<Kyc />} />} />
               <Route path="/approval-panel/kyc/online-kyc/:id" element={<ProtectedRoute element={<OnlineKyc />} />} />
               <Route path="/approval-panel/kyc/company-kyc/:id" element={<ProtectedRoute element={<CompanyVerification />} />} />

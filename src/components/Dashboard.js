@@ -33,7 +33,7 @@ function Dashboard() {
                     <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4">
                         Summary
                     </h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
                         {/* Total Users */}
                         <div className="bg-gray-100 p-4 rounded-lg text-center">
                             <h3 className="text-lg font-semibold text-gray-800">Total Users</h3>
@@ -51,6 +51,12 @@ function Dashboard() {
                             <h3 className="text-lg font-semibold text-gray-800">Confirmed Events</h3>
                             <p className="text-2xl font-bold text-orange-500">
                                 {bookings.filter((b) => b.status === "confirmEvent").length}
+                            </p>
+                        </div>
+                        <div className="bg-gray-100 p-4 rounded-lg text-center">
+                            <h3 className="text-lg font-semibold text-gray-800">Completed Events</h3>
+                            <p className="text-2xl font-bold text-orange-500">
+                                {bookings.filter((b) => b.status === "completed").length}
                             </p>
                         </div>
                         {/* Total Cancelled Events */}

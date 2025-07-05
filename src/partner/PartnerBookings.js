@@ -8,6 +8,7 @@ const PartnerBookings = () => {
   const [partner, setPartner] = useState(null);
   const [bookings, setBookings] = useState([]);
   const [userDetails, setUserDetails] = useState(null); // State for user details
+  const [bookingUsers, setBookingUsers] = useState({}); // State for booking users
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -30,6 +31,34 @@ const PartnerBookings = () => {
           const userData = await userResponse.json();
           setUserDetails(userData);
         }
+
+        // Fetch user details for each booking
+        const bookingUsersData = {};
+        console.log('Filtered bookings:', filteredBookings); // Debug log
+        for (const booking of filteredBookings) {
+          // Check multiple possible field names for user ID
+          const userId = booking.userId || booking.user_id || booking.customerId || booking.customer_id;
+          console.log('Processing booking:', booking.id, 'userId:', userId, 'Full booking object:', booking); // Debug log
+          if (userId) {
+            try {
+              const userResponse = await fetch(`https://shatabackend.in/user/${userId}`);
+              console.log('User response status:', userResponse.status, 'for userId:', userId); // Debug log
+              if (userResponse.ok) {
+                const userData = await userResponse.json();
+                console.log('User data for', userId, ':', userData); // Debug log
+                bookingUsersData[userId] = userData;
+              } else {
+                console.error(`HTTP error ${userResponse.status} for userId ${userId}`);
+              }
+            } catch (error) {
+              console.error(`Error fetching user data for userId ${userId}:`, error);
+            }
+          } else {
+            console.log('No userId found in booking:', booking.id);
+          }
+        }
+        console.log('Final booking users data:', bookingUsersData); // Debug log
+        setBookingUsers(bookingUsersData);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -51,7 +80,7 @@ const PartnerBookings = () => {
   return (
     <div className="p-6">
       <button
-        onClick={() => navigate('/partner')} // Navigate to /partner
+        onClick={() => navigate('/partner-details')} // Navigate to /partner-details
         className="mb-4 flex items-center px-4 py-2 text-white rounded hover:bg-orange-500"
       >
         <img 
@@ -81,14 +110,30 @@ const PartnerBookings = () => {
       <h3 className="text-xl font-bold mb-4">Bookings</h3>
       {bookings.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {bookings.map(booking => (
-            <div key={booking.id} className="bg-white p-6 rounded-lg shadow-md">
-              <p><strong>Booking ID:</strong> {booking._id}</p>
-              <p><strong>Service:</strong> {booking.eventType || 'N/A'}</p>
-              <p><strong>Date of Event:</strong> {booking.dateFrom ? booking.dateFrom.split('T')[0] : 'N/A'}</p>
-              <p><strong>Status:</strong> {booking.status || 'N/A'}</p>
-            </div>
-          ))}
+          {bookings.map((booking, index) => {
+            // Check multiple possible field names for user ID
+            const userId = booking.userId || booking.user_id || booking.customerId || booking.customer_id;
+            const bookingUser = bookingUsers[userId];
+            console.log('Rendering booking:', booking.id, 'userId:', userId, 'bookingUser:', bookingUser); // Debug log
+            return (
+              <div key={booking.id || `booking-${index}`} className="bg-white p-6 rounded-lg shadow-md">
+                <p><strong>Booking ID:</strong> {booking.numberId}</p>
+                {bookingUser ? (
+                  <>
+                    <p><strong>Customer Name:</strong> {bookingUser.data?.fullName || 'N/A'}</p>
+                    <p><strong>Customer Phone:</strong> {bookingUser.data?.phone  || 'N/A'}</p>
+                  </>
+                ) : userId ? (
+                  <p><strong>Customer:</strong> Loading user data...</p>
+                ) : (
+                  <p><strong>Customer:</strong> No user ID found</p>
+                )}
+                <p><strong>Service:</strong> {booking.eventType || 'N/A'}</p>
+                <p><strong>Date of Event:</strong> {booking.dateFrom ? booking.dateFrom.split('T')[0] : 'N/A'}</p>
+                <p><strong>Status:</strong> {booking.status || 'N/A'}</p>
+              </div>
+            );
+          })}
         </div>
       ) : (
         <div className="text-gray-600">No bookings found for this partner.</div>
