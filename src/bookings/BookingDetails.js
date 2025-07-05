@@ -378,10 +378,11 @@ function BookingDetails() {
                 >
                   <h3 className="text-xl font-semibold">{booking.eventType || "Not Available"}</h3>
                   <div className="flex items-center gap-2">
+                    <p><strong>Event Date:</strong></p>
                     <span>{booking?.dateFrom?.split("T")[0] || "No Date"}</span>
                   </div>
-                  <div className="flex flex-col gap-2">
-                    <p className="font-medium">Service Category:</p>
+                  <div className="flex gap-2">
+                    <p><strong>Service Category:</strong></p>
                     <span>{getBookingServices(booking).join(', ')}</span>
                   </div>
                   {booking.services?.length > 0 && (
@@ -390,10 +391,11 @@ function BookingDetails() {
                       {booking.services.map((s, i) => <span key={i}>{s}</span>)}
                     </>
                   )}
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-start gap-2 ">
+                    <p><strong>Partner Name:</strong></p>
                     <span>{booking.partnerName || "Not Available"}</span>
                     {/* Status Badge - Bottom Right */}
-                    <div className={`px-3 py-1 rounded-full text-xs font-medium ${statusInfo.bgColor} ${statusInfo.textColor}`}>
+                    <div className={`px-3 ml-20 py-1 rounded-full text-xs font-medium ${statusInfo.bgColor} ${statusInfo.textColor}`}>
                       {statusInfo.text}
                     </div>
                   </div>

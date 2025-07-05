@@ -122,6 +122,7 @@ const PartnerBookings = () => {
                   <>
                     <p><strong>Customer Name:</strong> {bookingUser.data?.fullName || 'N/A'}</p>
                     <p><strong>Customer Phone:</strong> {bookingUser.data?.phone  || 'N/A'}</p>
+                    <p><strong>Customer Email:</strong> {bookingUser.data?.email || 'N/A'}</p>
                   </>
                 ) : userId ? (
                   <p><strong>Customer:</strong> Loading user data...</p>
