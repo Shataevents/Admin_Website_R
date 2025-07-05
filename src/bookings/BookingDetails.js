@@ -220,7 +220,7 @@ function BookingDetails() {
       .then(res => res.ok ? res.json() : Promise.reject(res.status))
       .then(data => {
         const names = data
-          .filter(p => p.name && typeof p.name === 'string')
+          .filter(p => p.name && typeof p.name === 'string' && p.status === 'approved')
           .map(p => p.name.trim());
         setPartners(names);
       })
@@ -435,7 +435,7 @@ function BookingDetails() {
                   onClick={() => handleCardClick(booking)}
                 >
                   <div className='flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 relative z-10'>
-                    <h3 className="text-lg sm:text-md lg:text-lg font-semibold text-gray-800 flex-shrink-0">
+                    <h3 className="text-lg sm:text-md lg:text-lg font-semibold text-black flex-shrink-0">
                       {booking.eventType || "Not Available"}
                     </h3>
                     <div className='flex items-center gap-2 sm:ml-auto'>
