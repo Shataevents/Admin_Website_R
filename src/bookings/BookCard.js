@@ -302,7 +302,8 @@ const BookCard = () => {
           </svg>
         </button>
 
-        <h2 className="text-2xl font-bold mb-6">{booking.eventType}</h2>
+        <h2 className="text-2xl font-bold">{booking.eventType}</h2>
+        <p className="mb-6 mt-2"><strong> Booking ID:</strong> {booking.numberId}</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div>

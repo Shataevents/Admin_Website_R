@@ -39,6 +39,28 @@ function BookingDetails() {
     return services;
   };
 
+  // Helper function to get week boundaries using calendar logic
+  const getWeekBoundaries = (date, weeksToAdd = 0) => {
+    const targetDate = new Date(date);
+    targetDate.setDate(targetDate.getDate() + (weeksToAdd * 7));
+    
+    // Get the day of the week (0 = Sunday, 1 = Monday, etc.)
+    const dayOfWeek = targetDate.getDay();
+    
+    // Calculate start of week (Monday)
+    const startOfWeek = new Date(targetDate);
+    const daysFromMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // If Sunday, go back 6 days, else go back (dayOfWeek - 1) days
+    startOfWeek.setDate(targetDate.getDate() - daysFromMonday);
+    startOfWeek.setHours(0, 0, 0, 0);
+    
+    // Calculate end of week (Sunday)
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    endOfWeek.setHours(23, 59, 59, 999);
+    
+    return { startOfWeek, endOfWeek };
+  };
+
   const getFilteredBookingsByTab = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -78,33 +100,65 @@ function BookingDetails() {
     const now = new Date();
 
     // Date range filter
-    if (fromDate) result = result.filter(b => new Date(b.dateFrom) >= new Date(fromDate));
+    if (fromDate) {
+      const fromDateObj = new Date(fromDate);
+      fromDateObj.setHours(0, 0, 0, 0);
+      result = result.filter(b => {
+        const eventDate = new Date(b.dateFrom);
+        eventDate.setHours(0, 0, 0, 0);
+        return eventDate >= fromDateObj;
+      });
+    }
 
     // Preset date filter
     switch (dateFilter) {
       case 'thisWeek': {
-        const end = new Date(now);
-        end.setDate(end.getDate() + (7 - now.getDay()));
+        const today = new Date();
+        const { startOfWeek, endOfWeek } = getWeekBoundaries(today, 0);
+        
+        console.log('This Week Filter:', {
+          today: today.toDateString(),
+          startOfWeek: startOfWeek.toDateString(),
+          endOfWeek: endOfWeek.toDateString()
+        });
+        
         result = result.filter(b => {
-          const date = new Date(b.dateFrom);
-          return date >= now && date <= end;
+          const eventDate = new Date(b.dateFrom);
+          const isInRange = eventDate >= startOfWeek && eventDate <= endOfWeek;
+          if (isInRange) {
+            console.log('Booking in this week:', b.eventType, eventDate.toDateString());
+          }
+          return isInRange;
         });
         break;
       }
       case 'nextWeek': {
-        const start = new Date(now);
-        start.setDate(start.getDate() + (7 - now.getDay()) + 1);
-        const end = new Date(start);
-        end.setDate(start.getDate() + 6);
+        const today = new Date();
+        const { startOfWeek, endOfWeek } = getWeekBoundaries(today, 1);
+        
+        console.log('Next Week Filter:', {
+          today: today.toDateString(),
+          startOfWeek: startOfWeek.toDateString(),
+          endOfWeek: endOfWeek.toDateString()
+        });
+        
         result = result.filter(b => {
-          const date = new Date(b.dateFrom);
-          return date >= start && date <= end;
+          const eventDate = new Date(b.dateFrom);
+          const isInRange = eventDate >= startOfWeek && eventDate <= endOfWeek;
+          if (isInRange) {
+            console.log('Booking in next week:', b.eventType, eventDate.toDateString());
+          }
+          return isInRange;
         });
         break;
       }
       case 'thisMonth': {
         const start = new Date(now.getFullYear(), now.getMonth(), 1);
+        start.setHours(0, 0, 0, 0);
+        
         const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        end.setHours(23, 59, 59, 999);
+        
         result = result.filter(b => {
           const date = new Date(b.dateFrom);
           return date >= start && date <= end;
@@ -113,7 +167,11 @@ function BookingDetails() {
       }
       case 'nextMonth': {
         const start = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+        start.setHours(0, 0, 0, 0);
+        
         const end = new Date(now.getFullYear(), now.getMonth() + 2, 0);
+        end.setHours(23, 59, 59, 999);
+        
         result = result.filter(b => {
           const date = new Date(b.dateFrom);
           return date >= start && date <= end;
@@ -252,20 +310,20 @@ function BookingDetails() {
         };
       case 'confirmEvent':
         return {
-          text: 'Event Service is Confirmed.',
+          text: 'Service is Confirmed.',
           bgColor: 'bg-green-100',
           textColor: 'text-green-800'
         };
       case 'completed':
         return {
-          text: 'Event Service is Completed',
+          text: 'Service is Completed',
           bgColor: 'bg-emerald-100',
           textColor: 'text-emerald-800'
         };
       case 'cancel':
       case 'Cancel':
         return {
-          text: 'Event Service is Cancelled',
+          text: 'Service is Cancelled',
           bgColor: 'bg-red-100',
           textColor: 'text-red-800'
         };
@@ -324,7 +382,7 @@ function BookingDetails() {
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">Filter by Date</label>
+              <label className="block text-sm font-medium mb-2">Filter by Event Date</label>
               <select value={dateFilter} onChange={e => setDateFilter(e.target.value)} className="w-full p-2 border rounded">
                 <option value="all">All Dates</option>
                 <option value="thisWeek">This Week</option>
@@ -376,10 +434,24 @@ function BookingDetails() {
                   className="bg-white p-6 rounded-lg shadow-md flex flex-col gap-4 cursor-pointer hover:shadow-lg relative"
                   onClick={() => handleCardClick(booking)}
                 >
-                  <h3 className="text-xl font-semibold">{booking.eventType || "Not Available"}</h3>
+                  <div className='flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 relative z-10'>
+                    <h3 className="text-lg sm:text-md lg:text-lg font-semibold text-gray-800 flex-shrink-0">
+                      {booking.eventType || "Not Available"}
+                    </h3>
+                    <div className='flex items-center gap-2 sm:ml-auto'>
+                      <span className='text-xs sm:text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-md'>
+                        {booking.numberId || "Not Available"}
+                      </span>
+                    </div>
+                  </div>
+                  
                   <div className="flex items-center gap-2">
                     <p><strong>Event Date:</strong></p>
                     <span>{booking?.dateFrom?.split("T")[0] || "No Date"}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <p><strong>Booking Date:</strong></p>
+                    <span>{booking?.createdAt?.split("T")[0] || "No Date"}</span>
                   </div>
                   <div className="flex gap-2">
                     <p><strong>Service Category:</strong></p>
@@ -391,11 +463,17 @@ function BookingDetails() {
                       {booking.services.map((s, i) => <span key={i}>{s}</span>)}
                     </>
                   )}
-                  <div className="flex items-start gap-2 ">
-                    <p><strong>Partner Name:</strong></p>
-                    <span>{booking.partnerName || "Not Available"}</span>
-                    {/* Status Badge - Bottom Right */}
-                    <div className={`px-3 ml-20 py-1 rounded-full text-xs font-medium ${statusInfo.bgColor} ${statusInfo.textColor}`}>
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 relative z-10">
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm sm:text-base font-medium text-black">
+                        <strong>Partner Name:</strong>
+                      </p>
+                      <span className="text-sm sm:text-base text-black font-medium">
+                        {booking.partnerName || "Not Available"}
+                      </span>
+                    </div>
+                    {/* Status Badge - Positioned at end */}
+                    <div className={`px-2 rounded-full text-xs sm:text-sm font-medium shadow-sm relative z-20 self-end sm:self-center ${statusInfo.bgColor} ${statusInfo.textColor}`}>
                       {statusInfo.text}
                     </div>
                   </div>
