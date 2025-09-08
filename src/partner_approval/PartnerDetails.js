@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import LoadingScreen from "../components/LoadingScreen"; // Import the LoadingScreen component
+import LoadingScreen from "../components/LoadingScreen";
 
 const statusTabs = {
   pending: ["pending"],
@@ -25,6 +25,7 @@ const PartnerDetails = () => {
   const [planners, setPlanners] = useState([]);
   const [filteredPlanners, setFilteredPlanners] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState(""); // State for the search input
 
   useEffect(() => {
     fetch("https://shatabackend.in/partners")
@@ -45,14 +46,42 @@ const PartnerDetails = () => {
       });
   }, []);
 
+  // This useEffect now handles filtering by both tab and search query
   useEffect(() => {
-    setFilteredPlanners(
-      planners.filter((planner) => statusTabs[activeTab].includes(planner.status))
+    // 1. Filter by the active tab first
+    const plannersByTab = planners.filter((planner) =>
+      statusTabs[activeTab].includes(planner.status)
     );
-  }, [planners, activeTab]);
+
+    // 2. If there's no search query, just use the tab-filtered list
+    if (!searchQuery.trim()) {
+      setFilteredPlanners(plannersByTab);
+      return;
+    }
+
+    // 3. Process the search query for multi-term search
+    const searchTerms = searchQuery.toLowerCase().split(/\s+/).filter(Boolean);
+
+    // 4. Filter by all search terms
+    const searchedPlanners = plannersByTab.filter((planner) => {
+      // Combine all searchable fields into one string for easier searching
+      const searchableContent = [
+        planner.name,
+        planner.email,
+        planner.mobileNo,
+      ]
+        .join(" ")
+        .toLowerCase();
+
+      // Ensure every search term is included in the partner's details
+      return searchTerms.every(term => searchableContent.includes(term));
+    });
+
+    setFilteredPlanners(searchedPlanners);
+  }, [planners, activeTab, searchQuery]); // Re-run whenever the source data, tab, or query changes
 
   if (loading) {
-    return <LoadingScreen />; // Show the LoadingScreen while the data is loading
+    return <LoadingScreen />;
   }
 
   return (
@@ -72,13 +101,25 @@ const PartnerDetails = () => {
             </div>
           ))}
         </div>
+
+        {/* Search Bar */}
+        <div className="my-4">
+          <input
+            type="text"
+            placeholder="Search by name, email, or phone number..."
+            className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-orange-400 transition-all"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-6">
           {filteredPlanners.length > 0 ? (
-            filteredPlanners.map((planner, index) => (
+            filteredPlanners.map((planner) => (
               <div
-                key={index}
+                key={planner._id}
                 className="p-4 rounded-lg shadow-lg shadow-black/25 bg-white border-2 border-white cursor-pointer hover:bg-gray-100 transition-all"
-                onClick={() => navigate(`/approval-panel/kyc/${planner._id}`)} // Navigate on card click
+                onClick={() => navigate(`/approval-panel/kyc/${planner._id}`)}
               >
                 <h3 className="font-bold text-lg">{planner.name || "Not Available"}</h3>
                 <p className="text-black/70 text-sm">{planner.companyName || "Not Available"}</p>
@@ -89,7 +130,7 @@ const PartnerDetails = () => {
                 <button
                   className="px-3 py-1 bg-orange-400 text-black text-sm rounded-md mt-2"
                   onClick={(e) => {
-                    e.stopPropagation(); // Prevent triggering the card's onClick
+                    e.stopPropagation();
                     navigate(`/approval-panel/kyc/${planner._id}`);
                   }}
                 >
