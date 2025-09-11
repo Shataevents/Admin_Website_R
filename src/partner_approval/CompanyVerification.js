@@ -146,6 +146,24 @@ const CompanyVerification = () => {
       });
   };
 
+  // Helper to get file extension
+  const getFileExtension = (url) => {
+    return url?.split('.').pop().toLowerCase().split('?')[0];
+  };
+
+  const getFileType = (url) => {
+    if (!url) return null;
+    const ext = url.split('.').pop().toLowerCase().split('?')[0];
+    if (["jpg", "jpeg", "png", "gif", "bmp", "webp"].includes(ext)) return "image";
+    if (ext === "pdf") return "pdf";
+    if (["doc", "docx"].includes(ext)) return "doc";
+    if (["xls", "xlsx"].includes(ext)) return "excel";
+    if (["ppt", "pptx"].includes(ext)) return "ppt";
+    if (["mp4", "webm", "ogg"].includes(ext)) return "video";
+    if (["mp3", "wav"].includes(ext)) return "audio";
+    return "file";
+  };
+
   if (isLoading) {
     return <LoadingScreen />; // Show the LoadingScreen while the page is loading
   }
@@ -172,12 +190,21 @@ const CompanyVerification = () => {
         <div className="mb-6">
           <h4 className="text-xl font-bold">GST Certificate</h4>
           {planner.gstCertificateUrl ? (
-            <img
-              src={planner.gstCertificateUrl}
-              alt="GST Certificate"
-              className="w-50 h-40 rounded-md border-2 border-gray-500 mt-2 cursor-pointer"
+            <div
+              className="w-50 h-40 rounded-md border-2 mt-2 cursor-pointer flex items-center justify-center bg-gray-50"
               onClick={() => setPreviewImage(planner.gstCertificateUrl)}
-            />
+              style={{ minHeight: "10rem" }}
+            >
+              {getFileType(planner.gstCertificateUrl) === "image" ? (
+                <img src={planner.gstCertificateUrl} alt="GST Certificate" className="max-h-40 max-w-full object-contain" />
+              ) : getFileType(planner.gstCertificateUrl) === "pdf" ? (
+                <span className="text-red-600 font-bold text-lg">PDF Preview</span>
+              ) : getFileType(planner.gstCertificateUrl) === "doc" ? (
+                <span className="text-blue-600 font-bold text-lg">DOC Preview</span>
+              ) : (
+                <span className="text-gray-600 font-bold text-lg">File Preview</span>
+              )}
+            </div>
           ) : (
             <p className="text-gray-600 mt-2">GST Certificate not uploaded.</p>
           )}
@@ -185,12 +212,21 @@ const CompanyVerification = () => {
         <div>
           <h4 className="text-xl font-bold">Incorporation Certificate</h4>
           {planner.incorporationCertificateUrl ? (
-            <img
-              src={planner.incorporationCertificateUrl}
-              alt="Incorporation Certificate"
-              className="w-50 h-40 rounded-md border-2 border-gray-500 mt-2 cursor-pointer"
+            <div
+              className="w-50 h-40 rounded-md border-2 mt-2 cursor-pointer flex items-center justify-center bg-gray-50"
               onClick={() => setPreviewImage(planner.incorporationCertificateUrl)}
-            />
+              style={{ minHeight: "10rem" }}
+            >
+              {getFileType(planner.incorporationCertificateUrl) === "image" ? (
+                <img src={planner.incorporationCertificateUrl} alt="Incorporation Certificate" className="max-h-40 max-w-full object-contain" />
+              ) : getFileType(planner.incorporationCertificateUrl) === "pdf" ? (
+                <span className="text-red-600 font-bold text-lg">PDF Preview</span>
+              ) : getFileType(planner.incorporationCertificateUrl) === "doc" ? (
+                <span className="text-blue-600 font-bold text-lg">DOC Preview</span>
+              ) : (
+                <span className="text-gray-600 font-bold text-lg">File Preview</span>
+              )}
+            </div>
           ) : (
             <p className="text-gray-600 mt-2">Incorporation Certificate not uploaded.</p>
           )}
@@ -254,19 +290,76 @@ const CompanyVerification = () => {
 
       {previewImage && (
         <div className="fixed inset-0 bg-white z-50 flex flex-col">
-          {/* Image container */}
           <div className="flex-1 overflow-auto flex items-center justify-center bg-white relative py-6">
             <button
-              className="absolute top-6 right-6 w-10 h-10  text-red-500 rounded-full hover:bg-red-600 hover:text-white flex items-center justify-center text-lg font-bold transition-colors z-10"
+              className="absolute top-6 right-6 w-10 h-10 text-red-500 rounded-full hover:bg-red-600 hover:text-white flex items-center justify-center text-lg font-bold transition-colors z-10"
               onClick={closePreview}
             >
               <GrClose />
             </button>
-            <img 
-              src={previewImage} 
-              alt="Preview" 
-              className="max-w-full max-h-full object-contain shadow-lg"
-            />
+            {/* Preview logic (updated to match OnlineKyc.js style) */}
+            {(() => {
+              const ext = getFileExtension(previewImage);
+              if (["jpg", "jpeg", "png", "gif", "bmp", "webp"].includes(ext)) {
+                return (
+                  <img
+                    src={previewImage}
+                    alt="Preview"
+                    className="max-w-full max-h-full object-contain shadow-lg"
+                  />
+                );
+              } else if (ext === "pdf") {
+                return (
+                  <iframe
+                    src={`https://docs.google.com/gview?url=${encodeURIComponent(previewImage)}&embedded=true`}
+                    title="PDF Preview"
+                    className="w-[90vw] h-[80vh] border-2 rounded shadow-lg"
+                  />
+                );
+              } else if (["doc", "docx", "xls", "xlsx", "ppt", "pptx"].includes(ext)) {
+                // Use Office Online Viewer for Office files
+                return (
+                  <iframe
+                    src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(previewImage)}`}
+                    title="Office Preview"
+                    className="w-[90vw] h-[80vh] border-2 rounded shadow-lg"
+                  />
+                );
+              } else if (["txt", "csv", "json", "xml"].includes(ext)) {
+                return (
+                  <iframe
+                    src={previewImage}
+                    title="Text Preview"
+                    className="w-[90vw] h-[80vh] border-2 rounded shadow-lg"
+                  />
+                );
+              } else if (["mp4", "webm", "ogg"].includes(ext)) {
+                return (
+                  <video controls className="max-w-full max-h-full shadow-lg">
+                    <source src={previewImage} type={`video/${ext}`} />
+                    Your browser does not support the video tag.
+                  </video>
+                );
+              } else if (["mp3", "wav", "ogg"].includes(ext)) {
+                return (
+                  <audio controls className="w-full">
+                    <source src={previewImage} type={`audio/${ext}`} />
+                    Your browser does not support the audio element.
+                  </audio>
+                );
+              } else {
+                return (
+                  <div className="flex flex-col items-center">
+                    <span className="text-gray-700 mb-4">
+                      Preview not supported. <br />
+                      <a href={previewImage} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+                        Download File
+                      </a>
+                    </span>
+                  </div>
+                );
+              }
+            })()}
           </div>
         </div>
       )}

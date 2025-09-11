@@ -146,6 +146,21 @@ const OnlineKyc = () => {
       });
   };
 
+  // Helper to get file extension
+  const getFileExtension = (url) => {
+    if (!url) return "";
+    return url.split(".").pop().toLowerCase().split(/\#|\?/)[0];
+  };
+
+  // Helper to check file type
+  const getFileType = (url) => {
+    const ext = getFileExtension(url);
+    if (["jpg", "jpeg", "png", "gif", "bmp", "webp"].includes(ext)) return "image";
+    if (["pdf"].includes(ext)) return "pdf";
+    if (["doc", "docx"].includes(ext)) return "doc";
+    return "other";
+  };
+
   if (isLoading) {
     return <LoadingScreen />; // Show the LoadingScreen while the page is loading
   }
@@ -184,25 +199,43 @@ const OnlineKyc = () => {
           <div className="mb-4">
             <h4 className="text-xl font-bold">Aadhar Card</h4>
             {planner.aadharUrl ? (
-              <img
-                src={planner.aadharUrl}
-                alt="Aadhar Card"
-                className="w-50 h-40 rounded-md border-2 mt-2 cursor-pointer"
-                onClick={() => setPreviewImage(planner.aadharUrl)} // Set preview image
-              />
+              <div
+                className="w-50 h-40 rounded-md border-2 mt-2 cursor-pointer flex items-center justify-center bg-gray-50"
+                onClick={() => setPreviewImage(planner.aadharUrl)}
+                style={{ minHeight: "10rem" }}
+              >
+                {getFileType(planner.aadharUrl) === "image" ? (
+                  <img src={planner.aadharUrl} alt="Aadhar Card" className="max-h-40 max-w-full object-contain" />
+                ) : getFileType(planner.aadharUrl) === "pdf" ? (
+                  <span className="text-red-600 font-bold text-lg">PDF Preview</span>
+                ) : getFileType(planner.aadharUrl) === "doc" ? (
+                  <span className="text-blue-600 font-bold text-lg">DOC Preview</span>
+                ) : (
+                  <span className="text-gray-600 font-bold text-lg">File Preview</span>
+                )}
+              </div>
             ) : (
               <p className="text-gray-600 mt-2">Aadhar Card not uploaded.</p>
             )}
           </div>
           <div className="mb-4">
             <h4 className="text-xl font-bold">PAN Card</h4>
-            {planner.governmentIdUrl ? (
-              <img
-                src={planner.governmentIdUrl}
-                alt="PAN Card"
-                className="w-50 h-40 rounded-md border-2 mt-2 cursor-pointer"
-                onClick={() => setPreviewImage(planner.governmentIdUrl)} // Set preview image
-              />
+            {planner.panCardUrl ? (
+              <div
+                className="w-50 h-40 rounded-md border-2 mt-2 cursor-pointer flex items-center justify-center bg-gray-50"
+                onClick={() => setPreviewImage(planner.panCardUrl)}
+                style={{ minHeight: "10rem" }}
+              >
+                {getFileType(planner.panCardUrl) === "image" ? (
+                  <img src={planner.panCardUrl} alt="PAN Card" className="max-h-40 max-w-full object-contain" />
+                ) : getFileType(planner.panCardUrl) === "pdf" ? (
+                  <span className="text-red-600 font-bold text-lg">PDF Preview</span>
+                ) : getFileType(planner.panCardUrl) === "doc" ? (
+                  <span className="text-blue-600 font-bold text-lg">DOC Preview</span>
+                ) : (
+                  <span className="text-gray-600 font-bold text-lg">File Preview</span>
+                )}
+              </div>
             ) : (
               <p className="text-gray-600 mt-2">PAN Card not uploaded.</p>
             )}
@@ -326,7 +359,6 @@ const OnlineKyc = () => {
       {/* Preview Modal */}
       {previewImage && (
         <div className="fixed inset-0 bg-white z-50 flex flex-col">
-          {/* Image container */}
           <div className="flex-1 overflow-auto flex items-center justify-center bg-white relative py-6">
             <button
               className="absolute top-6 right-6 w-10 h-10 bg-red-500 text-white rounded-full hover:bg-red-600 flex items-center justify-center text-lg font-bold transition-colors z-10"
@@ -334,11 +366,30 @@ const OnlineKyc = () => {
             >
               <GrClose />
             </button>
-            <img 
-              src={previewImage} 
-              alt="Preview" 
-              className="max-w-full max-h-full object-contain shadow-lg"
-            />
+            {getFileType(previewImage) === "image" ? (
+              <img src={previewImage} alt="Preview" className="max-w-full max-h-full object-contain shadow-lg" />
+            ) : getFileType(previewImage) === "pdf" ? (
+              <iframe
+                src={`https://docs.google.com/gview?url=${encodeURIComponent(previewImage)}&embedded=true`}
+                title="PDF Preview"
+                className="w-[90vw] h-[80vh] border-2 rounded shadow-lg"
+              />
+            ) : getFileType(previewImage) === "doc" ? (
+              <iframe
+                src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(previewImage)}`}
+                title="DOC Preview"
+                className="w-[90vw] h-[80vh] border-2 rounded shadow-lg"
+              />
+            ) : (
+              <div className="flex flex-col items-center">
+                <span className="text-gray-700 mb-4">
+                  Preview not supported. <br />
+                  <a href={previewImage} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+                    Download File
+                  </a>
+                </span>
+              </div>
+            )}
           </div>
         </div>
       )}
