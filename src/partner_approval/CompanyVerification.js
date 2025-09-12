@@ -19,6 +19,9 @@ const CompanyVerification = () => {
   const [reuploadFileTypes, setReuploadFileTypes] = useState([]); // Multi-select for file types
   const [showDropdown, setShowDropdown] = useState(false); // For custom dropdown
   const dropdownRef = useRef(null);
+  const [declineFileTypes, setDeclineFileTypes] = useState([]); // Add this state
+  const [showDeclineDropdown, setShowDeclineDropdown] = useState(false); // For custom dropdown
+  const declineDropdownRef = useRef(null); // Ref for decline dropdown
   const isSuperAdmin = new URLSearchParams(location.search).get("superAdmin") === "true";
 
   // Close dropdown if clicked outside
@@ -35,6 +38,21 @@ const CompanyVerification = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showDropdown]);
+
+  // Close decline dropdown if clicked outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (declineDropdownRef.current && !declineDropdownRef.current.contains(event.target)) {
+        setShowDeclineDropdown(false);
+      }
+    }
+    if (showDeclineDropdown) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showDeclineDropdown]);
 
   useEffect(() => {
     if (!id) {
@@ -144,10 +162,20 @@ const CompanyVerification = () => {
   };
 
   const handleDecline = () => {
+    if (!declineFileTypes.length) {
+      alert("Please select at least one document to decline.");
+      return;
+    }
     if (!declineReason.trim()) {
       alert("Please enter a reason for declining.");
       return;
     }
+    const fileLabels = {
+      gst: "GST",
+      cin: "CIN",
+    };
+    const selectedLabels = declineFileTypes.map((type) => fileLabels[type] || type.toUpperCase()).join(", ");
+    const reasonMessage = `${selectedLabels} : ${declineReason}`;
 
     fetch(`https://shatabackend.in/partners/${id}`, {
       method: "PUT",
@@ -158,7 +186,7 @@ const CompanyVerification = () => {
       body: JSON.stringify({
         status: "DCV",
         cvStatus: "DCV",
-        reason: `DECLINE:- ${declineReason}`,
+        reason: reasonMessage, // No DECLINE:- prefix
       }),
     })
       .then((response) => {
@@ -170,6 +198,9 @@ const CompanyVerification = () => {
       .then(() => {
         alert("Planner declined!");
         setShowDeclinePopup(false);
+        setDeclineFileTypes([]);
+        setDeclineReason("");
+        setShowDeclineDropdown(false);
         navigate(-1);
       })
       .catch((error) => {
@@ -513,24 +544,114 @@ const CompanyVerification = () => {
       {showDeclinePopup && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-            <h2 className="text-2xl font-bold mbInfra-4">What is the reason for declining?</h2>
-            <textarea
-              className="w-full p-2 border rounded-md mb-4"
-              rows="4"
-              placeholder="Enter the reason here..."
-              value={declineReason}
-              onChange={(e) => setDeclineReason(e.target.value)}
-            ></textarea>
+            <h2 className="text-2xl font-bold mb-4">Select document(s) to decline</h2>
+            <div className="mb-4" ref={declineDropdownRef}>
+              <label className="block mb-2 font-semibold">Documents to decline</label>
+              <div className="relative">
+                <button
+                  type="button"
+                  className="w-full p-2 border rounded-md bg-white text-left"
+                  onClick={() => setShowDeclineDropdown((prev) => !prev)}
+                >
+                  {declineFileTypes.length === 0
+                    ? "Select document(s)..."
+                    : declineFileTypes
+                        .map((type) =>
+                          ({
+                            gst: "GST",
+                            cin: "CIN",
+                          }[type])
+                        )
+                        .join(", ")}
+                  <span className="float-right">&#9662;</span>
+                </button>
+                {showDeclineDropdown && (
+                  <div className="absolute z-10 mt-1 w-full bg-white border rounded shadow-lg">
+                    {["gst", "cin"].map((type) => (
+                      <div
+                        key={type}
+                        className={`px-4 py-2 cursor-pointer hover:bg-gray-100 flex items-center ${
+                          declineFileTypes.includes(type) ? "bg-gray-200" : ""
+                        }`}
+                        onClick={() => {
+                          setDeclineFileTypes((prev) =>
+                            prev.includes(type)
+                              ? prev.filter((t) => t !== type)
+                              : [...prev, type]
+                          );
+                          setShowDeclineDropdown(false); // Close dropdown after selection
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={declineFileTypes.includes(type)}
+                          readOnly
+                          className="mr-2"
+                        />
+                        {{
+                          gst: "GST",
+                          cin: "CIN",
+                        }[type]}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+              {/* Show selected options below dropdown */}
+              {declineFileTypes.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {declineFileTypes.map((type) => (
+                    <span
+                      key={type}
+                      className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm flex items-center"
+                    >
+                      {{
+                        gst: "GST",
+                        cin: "CIN",
+                      }[type]}
+                      <button
+                        className="ml-2 text-red-700 hover:text-red-900 font-bold"
+                        onClick={() =>
+                          setDeclineFileTypes((prev) => prev.filter((t) => t !== type))
+                        }
+                        title="Remove"
+                        type="button"
+                      >
+                        &times;
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+            {declineFileTypes.length > 0 && (
+              <>
+                <h2 className="text-xl font-semibold mb-2">Enter the reason for declining</h2>
+                <textarea
+                  className="w-full p-2 border rounded-md mb-4"
+                  rows="4"
+                  placeholder="Enter the reason here..."
+                  value={declineReason}
+                  onChange={(e) => setDeclineReason(e.target.value)}
+                ></textarea>
+              </>
+            )}
             <div className="flex justify-end gap-4">
               <button
                 className="bg-gray-300 text-black px-4 py-2 rounded-md hover:bg-gray-400"
-                onClick={() => setShowDeclinePopup(false)}
+                onClick={() => {
+                  setShowDeclinePopup(false);
+                  setDeclineFileTypes([]);
+                  setDeclineReason("");
+                  setShowDeclineDropdown(false);
+                }}
               >
                 Cancel
               </button>
               <button
                 className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
                 onClick={handleDecline}
+                disabled={!declineFileTypes.length || !declineReason.trim()}
               >
                 Submit
               </button>
