@@ -53,17 +53,23 @@ const PartnerDetails = () => {
       statusTabs[activeTab].includes(planner.status)
     );
 
-    // 2. If there's no search query, just use the tab-filtered list
+    // 2. Filter by specific companyEmail values
+    const allowedEmails = ["PLAN130000", "PLAN70000"];
+    const plannersByEmail = plannersByTab.filter(
+      (planner) => allowedEmails.includes(planner.companyEmail)
+    );
+
+    // 3. If there's no search query, just use the filtered list
     if (!searchQuery.trim()) {
-      setFilteredPlanners(plannersByTab);
+      setFilteredPlanners(plannersByEmail);
       return;
     }
 
-    // 3. Process the search query for multi-term search
+    // 4. Process the search query for multi-term search
     const searchTerms = searchQuery.toLowerCase().split(/\s+/).filter(Boolean);
 
-    // 4. Filter by all search terms
-    const searchedPlanners = plannersByTab.filter((planner) => {
+    // 5. Filter by all search terms
+    const searchedPlanners = plannersByEmail.filter((planner) => {
       // Combine all searchable fields into one string for easier searching
       const searchableContent = [
         planner.name,
@@ -74,7 +80,7 @@ const PartnerDetails = () => {
         .toLowerCase();
 
       // Ensure every search term is included in the partner's details
-      return searchTerms.every(term => searchableContent.includes(term));
+      return searchTerms.every((term) => searchableContent.includes(term));
     });
 
     setFilteredPlanners(searchedPlanners);
@@ -115,29 +121,44 @@ const PartnerDetails = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-6">
           {filteredPlanners.length > 0 ? (
-            filteredPlanners.map((planner) => (
-              <div
-                key={planner._id}
-                className="p-4 rounded-lg shadow-lg shadow-black/25 bg-white border-2 border-white cursor-pointer hover:bg-gray-100 transition-all"
-                onClick={() => navigate(`/approval-panel/kyc/${planner._id}`)}
-              >
-                <h3 className="font-bold text-lg">{planner.name || "Not Available"}</h3>
-                <p className="text-black/70 text-sm">{planner.companyName || "Not Available"}</p>
-                <p className="text-sm">Location: {planner.companyLocation || "Not Available"}</p>
-                <p className="text-sm font-semibold">
-                  Status: {planner.status}
-                </p>
-                <button
-                  className="px-3 py-1 bg-orange-400 text-black text-sm rounded-md mt-2"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate(`/approval-panel/kyc/${planner._id}`);
-                  }}
+            filteredPlanners.map((planner) => {
+              // Determine plan value display
+              let planValue = "";
+              if (planner.companyEmail === "PLAN130000") planValue = "1,30,000";
+              if (planner.companyEmail === "PLAN70000") planValue = "70,000";
+              return (
+                <div
+                  key={planner._id}
+                  className="relative p-4 rounded-lg shadow-lg shadow-black/25 bg-white border-2 border-white cursor-pointer hover:bg-gray-100 transition-all"
+                  onClick={() => navigate(`/approval-panel/kyc/${planner._id}`)}
                 >
-                  Check Details
-                </button>
-              </div>
-            ))
+                  <h3 className="font-bold text-lg">{planner.name || "Not Available"}</h3>
+                  <p className="text-black/70 text-sm">{planner.companyName || "Not Available"}</p>
+                  <p className="text-sm">Location: {planner.companyLocation || "Not Available"}</p>
+                  <p className="text-sm font-semibold">
+                    Status: {planner.status}
+                  </p>
+                  <button
+                    className="px-3 py-1 bg-orange-400 text-black text-sm rounded-md mt-2"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/approval-panel/kyc/${planner._id}`);
+                    }}
+                  >
+                    Check Details
+                  </button>
+                  {/* Plan Value Badge */}
+                  {planValue && (
+                    <div
+                      className="absolute bottom-3 right-3 bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg z-20"
+                      style={{ zIndex: 20 }}
+                    >
+                      ₹ {planValue}
+                    </div>
+                  )}
+                </div>
+              );
+            })
           ) : (
             <div className="col-span-1 sm:col-span-2 md:col-span-3 text-center text-gray-600 text-xl">
               No partner found.

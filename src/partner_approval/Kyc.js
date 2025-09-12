@@ -116,9 +116,13 @@ const Kyc = () => {
       <div className="bg-white border-2 border-white p-6 rounded-lg shadow-md">
         <h3 className="text-3xl font-semibold mb-2">Partner Details</h3>
         <p className="text-xl"><strong>Name:</strong> {planner.name || "Not Available"}</p>
+        <p className="text-xl"><strong>Email:</strong> {planner.personalEmail || "Not Available"}</p> {/* Added line */}
         <p className="text-xl"><strong>Company:</strong> {planner.companyName || "Not Available"}</p>
         <p className="text-xl"><strong>Company Location:</strong> {planner.companyLocation || "Not Available"}</p>
         <p className="text-xl"><strong>Partner Phone:</strong> {planner.mobileNo || "Not Available"}</p>
+        
+        <p className="text-xl"><strong>GST No:</strong> {planner.gstNo || "Not Available"}</p>
+        <p className="text-xl"><strong>Pricing Plan:</strong> {planner.companyEmail === "PLAN130000" ? "₹ 1,30,000" : planner.companyEmail === "PLAN70000" ? "₹ 70,000" : (planner.companyEmail || "Not Available")}</p>
         <p className="text-xl"><strong>Selected Services:</strong> {
           planner.servicesSelected && Array.isArray(planner.servicesSelected) && planner.servicesSelected.length > 0
             ? planner.servicesSelected.join(", ")

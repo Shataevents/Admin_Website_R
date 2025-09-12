@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
 import { GrClose } from "react-icons/gr";
@@ -16,7 +16,25 @@ const CompanyVerification = () => {
   const [showDeclinePopup, setShowDeclinePopup] = useState(false);
   const [reuploadReason, setReuploadReason] = useState("");
   const [declineReason, setDeclineReason] = useState("");
+  const [reuploadFileTypes, setReuploadFileTypes] = useState([]); // Multi-select for file types
+  const [showDropdown, setShowDropdown] = useState(false); // For custom dropdown
+  const dropdownRef = useRef(null);
   const isSuperAdmin = new URLSearchParams(location.search).get("superAdmin") === "true";
+
+  // Close dropdown if clicked outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    }
+    if (showDropdown) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showDropdown]);
 
   useEffect(() => {
     if (!id) {
@@ -77,10 +95,21 @@ const CompanyVerification = () => {
   };
 
   const handleReupload = () => {
+    if (!reuploadFileTypes.length) {
+      alert("Please select at least one document to be reuploaded.");
+      return;
+    }
     if (!reuploadReason.trim()) {
       alert("Please enter a reason for reuploadation.");
       return;
     }
+
+    const fileLabels = {
+      gst: "GST",
+      cin: "CIN",
+    };
+    const selectedLabels = reuploadFileTypes.map((type) => fileLabels[type] || type.toUpperCase()).join(", ");
+    const reasonMessage = `${selectedLabels} : ${reuploadReason}`;
 
     fetch(`https://shatabackend.in/partners/${id}`, {
       method: "PUT",
@@ -91,7 +120,7 @@ const CompanyVerification = () => {
       body: JSON.stringify({
         status: "RCV",
         cvStatus: "RCV",
-        reason: `REUPLOAD:- ${reuploadReason}`,
+        reason: reasonMessage,
       }),
     })
       .then((response) => {
@@ -103,6 +132,9 @@ const CompanyVerification = () => {
       .then(() => {
         alert("Planner marked for reupload!");
         setShowReuploadPopup(false);
+        setReuploadFileTypes([]);
+        setReuploadReason("");
+        setShowDropdown(false);
         navigate(-1);
       })
       .catch((error) => {
@@ -189,7 +221,7 @@ const CompanyVerification = () => {
         <h3 className="text-3xl font-semibold mb-4">Company Documents</h3>
         <div className="mb-6">
           <h4 className="text-xl font-bold">GST Certificate</h4>
-          {planner.gstCertificateUrl ? (
+          {planner.gstCertificateUrl && planner.gstCertificateUrl.trim() !== "" ? (
             <div
               className="w-50 h-40 rounded-md border-2 mt-2 cursor-pointer flex items-center justify-center bg-gray-50"
               onClick={() => setPreviewImage(planner.gstCertificateUrl)}
@@ -211,7 +243,7 @@ const CompanyVerification = () => {
         </div>
         <div>
           <h4 className="text-xl font-bold">Incorporation Certificate</h4>
-          {planner.incorporationCertificateUrl ? (
+          {planner.incorporationCertificateUrl && planner.incorporationCertificateUrl.trim() !== "" ? (
             <div
               className="w-50 h-40 rounded-md border-2 mt-2 cursor-pointer flex items-center justify-center bg-gray-50"
               onClick={() => setPreviewImage(planner.incorporationCertificateUrl)}
@@ -348,16 +380,11 @@ const CompanyVerification = () => {
                   </audio>
                 );
               } else {
-                return (
-                  <div className="flex flex-col items-center">
-                    <span className="text-gray-700 mb-4">
-                      Preview not supported. <br />
-                      <a href={previewImage} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
-                        Download File
-                      </a>
-                    </span>
-                  </div>
-                );
+                // Fallback for unsupported file types
+                // Instead of showing a preview, open the file in a new tab and close the modal
+                window.open(previewImage, "_blank", "noopener,noreferrer");
+                setTimeout(() => setPreviewImage(null), 0); // Close the modal immediately
+                return null;
               }
             })()}
           </div>
@@ -367,24 +394,114 @@ const CompanyVerification = () => {
       {showReuploadPopup && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-            <h2 className="text-2xl font-bold mb-4">What is the reason for reuploadation?</h2>
-            <textarea
-              className="w-full p-2 border rounded-md mb-4"
-              rows="4"
-              placeholder="Enter the reason here..."
-              value={reuploadReason}
-              onChange={(e) => setReuploadReason(e.target.value)}
-            ></textarea>
+            <h2 className="text-2xl font-bold mb-4">Select document(s) to reupload</h2>
+            <div className="mb-4" ref={dropdownRef}>
+              <label className="block mb-2 font-semibold">Documents to reupload</label>
+              <div className="relative">
+                <button
+                  type="button"
+                  className="w-full p-2 border rounded-md bg-white text-left"
+                  onClick={() => setShowDropdown((prev) => !prev)}
+                >
+                  {reuploadFileTypes.length === 0
+                    ? "Select document(s)..."
+                    : reuploadFileTypes
+                        .map((type) =>
+                          ({
+                            gst: "GST",
+                            cin: "CIN",
+                          }[type])
+                        )
+                        .join(", ")}
+                  <span className="float-right">&#9662;</span>
+                </button>
+                {showDropdown && (
+                  <div className="absolute z-10 mt-1 w-full bg-white border rounded shadow-lg">
+                    {["gst", "cin"].map((type) => (
+                      <div
+                        key={type}
+                        className={`px-4 py-2 cursor-pointer hover:bg-gray-100 flex items-center ${
+                          reuploadFileTypes.includes(type) ? "bg-gray-200" : ""
+                        }`}
+                        onClick={() => {
+                          setReuploadFileTypes((prev) =>
+                            prev.includes(type)
+                              ? prev.filter((t) => t !== type)
+                              : [...prev, type]
+                          );
+                          setShowDropdown(false); // Close dropdown after selection
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={reuploadFileTypes.includes(type)}
+                          readOnly
+                          className="mr-2"
+                        />
+                        {{
+                          gst: "GST",
+                          cin: "CIN",
+                        }[type]}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+              {/* Show selected options below dropdown */}
+              {reuploadFileTypes.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {reuploadFileTypes.map((type) => (
+                    <span
+                      key={type}
+                      className="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm flex items-center"
+                    >
+                      {{
+                        gst: "GST",
+                        cin: "CIN",
+                      }[type]}
+                      <button
+                        className="ml-2 text-orange-700 hover:text-orange-900 font-bold"
+                        onClick={() =>
+                          setReuploadFileTypes((prev) => prev.filter((t) => t !== type))
+                        }
+                        title="Remove"
+                        type="button"
+                      >
+                        &times;
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+            {reuploadFileTypes.length > 0 && (
+              <>
+                <h2 className="text-xl font-semibold mb-2">Enter the reason for reuploadation</h2>
+                <textarea
+                  className="w-full p-2 border rounded-md mb-4"
+                  rows="4"
+                  placeholder="Enter the reason here..."
+                  value={reuploadReason}
+                  onChange={(e) => setReuploadReason(e.target.value)}
+                ></textarea>
+              </>
+            )}
             <div className="flex justify-end gap-4">
               <button
                 className="bg-gray-300 text-black px-4 py-2 rounded-md hover:bg-gray-400"
-                onClick={() => setShowReuploadPopup(false)}
+                onClick={() => {
+                  setShowReuploadPopup(false);
+                  setReuploadFileTypes([]);
+                  setReuploadReason("");
+                  setShowDropdown(false);
+                }}
               >
                 Cancel
               </button>
               <button
                 className="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600"
                 onClick={handleReupload}
+                disabled={!reuploadFileTypes.length || !reuploadReason.trim()}
               >
                 Submit
               </button>
