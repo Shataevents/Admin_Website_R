@@ -54,7 +54,7 @@ const PartnerDetails = () => {
     );
 
     // 2. Filter by specific companyEmail values
-    const allowedEmails = ["PLAN130000", "PLAN70000"];
+    const allowedEmails = ["PLAN130000", "PLAN70000", "Guest"];
     const plannersByEmail = plannersByTab.filter(
       (planner) => allowedEmails.includes(planner.companyEmail)
     );
@@ -154,6 +154,15 @@ const PartnerDetails = () => {
                       style={{ zIndex: 20 }}
                     >
                       ₹ {planValue}
+                    </div>
+                  )}
+                  {/* Guest Badge */}
+                  {planner.companyEmail === "Guest" && (
+                    <div
+                      className="absolute bottom-3 right-3 bg-green-200 text-green-800 text-xs font-bold px-3 py-1 rounded-full shadow-lg z-20"
+                      style={{ zIndex: 20 }}
+                    >
+                      Guest
                     </div>
                   )}
                 </div>

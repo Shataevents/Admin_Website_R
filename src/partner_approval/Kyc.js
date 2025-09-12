@@ -89,6 +89,12 @@ const Kyc = () => {
     return <div className="p-6 text-center text-gray-600 text-xl">{error || "No partner details found."}</div>;
   }
 
+  // Filter steps if companyEmail is "Guest"
+  const stepsToShow =
+    planner && planner.companyEmail === "Guest"
+      ? verificationSteps.filter((step) => step.title !== "Company Verification")
+      : verificationSteps;
+
   const isStepAccessible = (index) => {
     if (planner.status === "decline" || isSuperAdmin) return true;
     if (index === 0) return true;
@@ -131,7 +137,7 @@ const Kyc = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-        {verificationSteps.map((step, index) => (
+        {stepsToShow.map((step, index) => (
           <div
             key={index}
             className={`bg-white border-white p-4 rounded-lg shadow-lg border-2 transition-all ${
